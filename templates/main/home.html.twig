@@ -5,5 +5,32 @@
 {% endblock %}
 
 {% block body %}
-    <p class=" bg-github-dark-gray text-body p-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Atque blanditiis dolorem error fuga fugiat id, illum iusto nesciunt odit pariatur praesentium quam quia voluptas? Alias excepturi nam quam sequi voluptas!</p>
+    <p class=" bg-github-dark-gray text-body p-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Atque
+        blanditiis dolorem error fuga fugiat id, illum iusto nesciunt odit pariatur praesentium quam quia voluptas?
+        Alias excepturi nam quam sequi voluptas!</p>
+
+    {% if not app.user %}
+        <form class="max-w-sm mx-auto bg-github-dark-gray p-4 m-8" method="post">
+            {% if error %}
+                <div class="text-red-500 mb-4">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
+            <div class="mb-5">
+                <label for="username" class="block mb-2.5 text-sm font-medium text-heading">Identifiant (e-mail)</label>
+                <input type="text" value="{{ last_username }}" name="_username" id="username"
+                       class="bg-gray-800 border border-gray-600 text-heading text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-3 py-2.5 placeholder:text-gray-400"
+                       autocomplete="username" required autofocus/>
+            </div>
+            <div class="mb-5">
+                <label for="password" class="block mb-2.5 text-sm font-medium text-heading">Mot de passe</label>
+                <input type="password" name="_password" id="password"
+                       class="bg-gray-800 border border-gray-600 text-heading text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-3 py-2.5 placeholder:text-gray-400"
+                       autocomplete="current-password" required/>
+            </div>
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+            <button type="submit"
+                    class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-500 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none">
+                Se connecter
+            </button>
+        </form>
+    {% endif %}
 {% endblock %}
