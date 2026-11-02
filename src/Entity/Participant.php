@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ParticipantRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ParticipantRepository::class)]
@@ -30,6 +32,20 @@ class Participant
 
     #[ORM\Column]
     private ?bool $administrateur = null;
+
+    /**
+     * @var Collection<int, Sortie>
+     */
+    #[ORM\ManyToMany(targetEntity: Sortie::class, inversedBy: 'participants')]
+    private Collection $sortie;
+
+    #[ORM\ManyToOne(inversedBy: 'participants')]
+    private ?Campus $campus = null;
+
+    public function __construct()
+    {
+        $this->sortie = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -104,6 +120,42 @@ class Participant
     public function setAdministrateur(bool $administrateur): static
     {
         $this->administrateur = $administrateur;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Sortie>
+     */
+    public function getSortie(): Collection
+    {
+        return $this->sortie;
+    }
+
+    public function addSortie(Sortie $sortie): static
+    {
+        if (!$this->sortie->contains($sortie)) {
+            $this->sortie->add($sortie);
+        }
+
+        return $this;
+    }
+
+    public function removeSortie(Sortie $sortie): static
+    {
+        $this->sortie->removeElement($sortie);
+
+        return $this;
+    }
+
+    public function getCampus(): ?Campus
+    {
+        return $this->campus;
+    }
+
+    public function setCampus(?Campus $campus): static
+    {
+        $this->campus = $campus;
 
         return $this;
     }
