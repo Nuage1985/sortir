@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1 class="text-center text-3xl text-heading font-semibold whitespace-nowrap mb-8">Mon Profil</h1>
+
+    <div class="max-w-xl mx-auto bg-github-dark-gray p-6 rounded-lg">
+        {{ form_start(profilForm) }}
+
+        <div class="mb-5">
+            {{ form_label(profilForm.campus) }}
+            {{ form_widget(profilForm.campus) }}
+        </div>
+
+        <div class="mb-5">
+            <span class="text-red-500 text-xs mb-0.5">*</span>
+            {{ form_label(profilForm.pseudo, null, {'label_attr': {'class': 'block mb-2.5 text-sm font-medium text-heading'}}) }}
+            {{ form_widget(profilForm.pseudo) }}
+        </div>
+
+        <div class="mb-5">
+            <span class="text-red-500 text-xs mb-0.5">*</span>
+            {{ form_label(profilForm.prenom, null, {'label_attr': {'class': 'block mb-2.5 text-sm font-medium text-heading'}}) }}
+            {{ form_widget(profilForm.prenom) }}
+        </div>
+
+        <div class="mb-5">
+            <span class="text-red-500 text-xs mb-0.5">*</span>
+            {{ form_label(profilForm.nom, null, {'label_attr': {'class': 'block mb-2.5 text-sm font-medium text-heading'}}) }}
+            {{ form_widget(profilForm.nom) }}
+        </div>
+
+        <div class="mb-5">
+            {{ form_label(profilForm.telephone) }}
+            {{ form_widget(profilForm.telephone) }}
+        </div>
+
+        <div class="mb-5">
+            <span class="text-red-500 text-xs mb-0.5">*</span>
+            {{ form_label(profilForm.mail, null, {'label_attr': {'class': 'block mb-2.5 text-sm font-medium text-heading'}}) }}
+            {{ form_widget(profilForm.mail) }}
+        </div>
+
+        <div class="mb-5">
+            {{ form_label(profilForm.password.first) }}
+            <p class="text-xs text-gray-400 mt-1">La modification du mot de passe n'est pas obligatoire.</p>
+            {{ form_widget(profilForm.password.first) }}
+        </div>
+
+        <div class="mb-5">
+            {{ form_label(profilForm.password.second) }}
+            {{ form_widget(profilForm.password.second) }}
+        </div>
+
+        {{ form_rest(profilForm) }}
+
+        <button type="submit"
+                class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-500 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none">
+            Modifier
+        </button>
+
+        {{ form_end(profilForm) }}
+    </div>
+{% endblock %}
+
+{% block title %}
+    {{ parent() }} | Profil {{ participant.pseudo }}
+{% endblock %}

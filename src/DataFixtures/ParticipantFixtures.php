@@ -25,7 +25,8 @@ class ParticipantFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager): void
     {
         $user = new Participant();
-        $user->setNom('Dupont')
+        $user->setPseudo('MarieD_44')
+            ->setNom('Dupont')
             ->setPrenom('Marie')
             ->setMail('marie@eni.fr')
             ->setAdmin(false)
@@ -35,7 +36,8 @@ class ParticipantFixtures extends Fixture implements DependentFixtureInterface
         $manager->persist($user);
 
         $admin = new Participant();
-        $admin->setNom('Martin')
+        $admin->setPseudo('CoachAdmin')
+            ->setNom('Martin')
             ->setPrenom('Paul')
             ->setMail('admin@eni.fr')
             ->setAdmin(true)

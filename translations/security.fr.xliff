@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en" target-language="fr" datatype="plaintext" original="file.ext">
+    <body>
+      <trans-unit id="invalid_credentials">
+        <source>invalid_credentials</source>
+        <target>Identifiant ou mot de passe incorrect.</target>
+      </trans-unit>
+      <trans-unit id="Bad CSRF token.">
+        <source>Bad CSRF token.</source>
+        <target>Le jeton de sécurité est invalide. Actualisez la page et réessayez.</target>
+      </trans-unit>
+      <trans-unit id="account_locked">
+        <source>account_locked</source>
+        <target>Votre compte a été verrouillé.</target>
+      </trans-unit>
+      <trans-unit id="account_disabled">
+        <source>account_disabled</source>
+        <target>Votre compte est désactivé.</target>
+      </trans-unit>
+      <trans-unit id="credentials_expired">
+        <source>credentials_expired</source>
+        <target>Vos identifiants ont expiré.</target>
+      </trans-unit>
+      <trans-unit id="no_credentials">
+        <source>no_credentials</source>
+        <target>Aucun identifiant n'a été fourni.</target>
+      </trans-unit>
+      <trans-unit id="no_password">
+        <source>no_password</source>
+        <target>Aucun mot de passe n'a été fourni.</target>
+      </trans-unit>
+      <trans-unit id="too_many_login_attempts">
+        <source>too_many_login_attempts</source>
+        <target>Trop de tentatives de connexion. Veuillez réessayer plus tard.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

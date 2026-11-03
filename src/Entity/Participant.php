@@ -11,7 +11,8 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[UniqueEntity(fields: ['mail'], message: 'Ce compte mail existe déjà.')]
+#[UniqueEntity(fields: ['mail'], message: 'Ce compte mail existe déjà !')]
+#[UniqueEntity(fields: ['pseudo'], message: 'Ce pseudonyme existe déjà !')]
 #[ORM\Entity(repositoryClass: ParticipantRepository::class)]
 class Participant implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -19,6 +20,11 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
+
+    #[Assert\NotBlank(message: 'Merci de saisir un pseudonyme')]
+    #[Assert\Length(min: 5, max: 180)]
+    #[ORM\Column(length: 180)]
+    private ?string $pseudo = null;
 
     #[Assert\NotBlank(message: 'Merci de saisir un nom')]
     #[Assert\Length(min:2, max: 50)]
@@ -201,6 +207,18 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeSorty(Sortie $sorty): static
     {
         $this->sorties->removeElement($sorty);
+
+        return $this;
+    }
+
+    public function getPseudo(): ?string
+    {
+        return $this->pseudo;
+    }
+
+    public function setPseudo(string $pseudo): static
+    {
+        $this->pseudo = $pseudo;
 
         return $this;
     }

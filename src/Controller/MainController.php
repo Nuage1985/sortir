@@ -20,4 +20,11 @@ final class MainController extends AbstractController
             'last_username' => $lastUsername,
         ]);
     }
+
+    #[Route('/login_check', name: 'login_check')]
+    public function loginCheck(): Response
+    {
+        // Cette route est gérée par Symfony Security, elle ne devrait jamais être atteinte
+        throw $this->createNotFoundException('Cette route est gérée par le firewall.');
+    }
 }

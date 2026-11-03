@@ -5,17 +5,15 @@
 {% endblock %}
 
 {% block body %}
-    <p class=" bg-github-dark-gray text-body p-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Atque
-        blanditiis dolorem error fuga fugiat id, illum iusto nesciunt odit pariatur praesentium quam quia voluptas?
-        Alias excepturi nam quam sequi voluptas!</p>
-
     {% if not app.user %}
-        <form class="max-w-sm mx-auto bg-github-dark-gray p-4 m-8 rounded-lg" method="post">
+        <form class="max-w-sm mx-auto bg-github-dark-gray p-4 m-8 rounded-lg" action="{{ path('login_check') }}"
+              method="post">
             {% if error %}
                 <div class="text-red-500 mb-4">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
             {% endif %}
             <div class="mb-5">
-                <label for="username" class="block mb-2.5 text-sm font-medium text-heading">Identifiant (e-mail)</label>
+                <label for="username" class="block mb-2.5 text-sm font-medium text-heading">Identifiant (e-mail ou
+                    pseudonyme)</label>
                 <input type="text" value="{{ last_username }}" name="_username" id="username"
                        class="bg-gray-800 border border-gray-600 text-heading text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-3 py-2.5 placeholder:text-gray-400"
                        autocomplete="username" required autofocus/>
@@ -36,5 +34,180 @@
                 Se connecter
             </button>
         </form>
+    {% endif %}
+
+    {% if is_granted('ROLE_USER') %}
+        <div
+            class="relative overflow-x-auto bg-github-dark-gray text-heading shadow-sm rounded-lg border border-gray-600">
+            <table class="w-full text-sm text-left text-heading">
+                <thead class="bg-gray-700 border-b border-gray-600">
+                <tr>
+                    <th scope="col" class="px-6 py-3 font-medium">
+                        Nom de la sortie
+                    </th>
+                    <th scope="col" class="px-6 py-3 font-medium">
+                        Date de la sortie
+                    </th>
+                    <th scope="col" class="px-6 py-3 font-medium">
+                        Clôture
+                    </th>
+                    <th scope="col" class="px-6 py-3 font-medium">
+                        Inscrit(s) / Places
+                    </th>
+                    <th scope="col" class="px-6 py-3 font-medium">
+                        État
+                    </th>
+                    <th scope="col" class="px-6 py-3 font-medium">
+                        Inscrit
+                    </th>
+                    <th scope="col" class="px-6 py-3 font-medium">
+                        Organisateur
+                    </th>
+                    <th scope="col" class="px-6 py-3 font-medium">
+                        Action
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="bg-github-dark-gray border-b border-gray-600">
+                    <th scope="row" class="px-6 py-4 font-medium text-heading whitespace-nowrap">
+                        Barberousse Aix-en-Provence
+                    </th>
+                    <td class="px-6 py-4">
+                        05/12/2026
+                    </td>
+                    <td class="px-6 py-4">
+                        30/11/2026
+                    </td>
+                    <td class="px-6 py-4">
+                        6 / 6
+                    </td>
+                    <td class="px-6 py-4">
+                        En cours
+                    </td>
+                    <td class="px-6 py-4">
+                        X
+                    </td>
+                    <td class="px-6 py-4">
+                        <a href="#" class="font-medium text-blue-500 hover:underline">Dupond M.</a>
+                    </td>
+                    <td class="px-6 py-4">
+                        <a href="#" class="font-medium text-blue-500 hover:underline">Afficher</a><br>
+                        <a href="#" class="font-medium text-blue-500 hover:underline">Se désister</a>
+                    </td>
+                </tr>
+                <tr class="bg-gray-800 border-b border-gray-600">
+                    <th scope="row" class="px-6 py-4 font-medium text-heading whitespace-nowrap">
+                        Sortie cinéma Arvor Rennes
+                    </th>
+                    <td class="px-6 py-4">
+                        10/11/2026
+                    </td>
+                    <td class="px-6 py-4">
+                        08/11/2026
+                    </td>
+                    <td class="px-6 py-4">
+                        7 / 8
+                    </td>
+                    <td class="px-6 py-4">
+                        Ouverte
+                    </td>
+                    <td class="px-6 py-4">
+
+                    </td>
+                    <td class="px-6 py-4">
+                        <a href="#" class="font-medium text-blue-500 hover:underline">Lomperet A.</a>
+                    </td>
+                    <td class="px-6 py-4">
+                        <a href="#" class="font-medium text-blue-500 hover:underline">Afficher</a><br>
+                        <a href="#" class="font-medium text-blue-500 hover:underline">S'inscrire</a>
+                    </td>
+                </tr>
+                <tr class="bg-github-dark-gray border-b border-gray-600">
+                    <th scope="row" class="px-6 py-4 font-medium text-heading whitespace-nowrap">
+                        John Doe Escape Game Nantes
+                    </th>
+                    <td class="px-6 py-4">
+                        08/11/2026
+                    </td>
+                    <td class="px-6 py-4">
+                        30/10/2026
+                    </td>
+                    <td class="px-6 py-4">
+                        4 / 8
+                    </td>
+                    <td class="px-6 py-4">
+                        Clôturée
+                    </td>
+                    <td class="px-6 py-4">
+                        X
+                    </td>
+                    <td class="px-6 py-4">
+                        <a href="#" class="font-medium text-blue-500 hover:underline">Dupont M.</a>
+                    </td>
+                    <td class="px-6 py-4">
+                        <a href="#" class="font-medium text-blue-500 hover:underline">Afficher</a><br>
+                        <a href="#" class="font-medium text-blue-500 hover:underline">Se désister</a>
+                    </td>
+                </tr>
+                <tr class="bg-gray-800 border-b border-gray-600">
+                    <th scope="row" class="px-6 py-4 font-medium text-heading whitespace-nowrap">
+                        LAN Party Paris
+                    </th>
+                    <td class="px-6 py-4">
+                        11/11/2026
+                    </td>
+                    <td class="px-6 py-4">
+                        04/11/2026
+                    </td>
+                    <td class="px-6 py-4">
+                        14 / 20
+                    </td>
+                    <td class="px-6 py-4">
+                        Ouverte
+                    </td>
+                    <td class="px-6 py-4">
+
+                    </td>
+                    <td class="px-6 py-4">
+                        <a href="#" class="font-medium text-blue-500 hover:underline">Dupond M.</a>
+                    </td>
+                    <td class="px-6 py-4">
+                        <a href="#" class="font-medium text-blue-500 hover:underline">Afficher</a><br>
+                        <a href="#" class="font-medium text-blue-500 hover:underline">S'inscrire</a>
+                        <a href="#" class="font-medium text-blue-500 hover:underline">Annuler</a>
+                    </td>
+                </tr>
+                <tr class="bg-github-dark-gray border-b border-gray-600">
+                    <th scope="row" class="px-6 py-4 font-medium text-heading whitespace-nowrap">
+                        John Doe Escape Game Nantes
+                    </th>
+                    <td class="px-6 py-4">
+                        08/11/2026
+                    </td>
+                    <td class="px-6 py-4">
+                        30/10/2026
+                    </td>
+                    <td class="px-6 py-4">
+                        4 / 8
+                    </td>
+                    <td class="px-6 py-4">
+                        Création
+                    </td>
+                    <td class="px-6 py-4">
+                        X
+                    </td>
+                    <td class="px-6 py-4">
+                        <a href="#" class="font-medium text-blue-500 hover:underline">Dupond M.</a>
+                    </td>
+                    <td class="px-6 py-4">
+                        <a href="#" class="font-medium text-blue-500 hover:underline">Modifier</a><br>
+                        <a href="#" class="font-medium text-blue-500 hover:underline">S'inscrire</a>
+                        <a href="#" class="font-medium text-blue-500 hover:underline">Annuler</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     {% endif %}
 {% endblock %}
