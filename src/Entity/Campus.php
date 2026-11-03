@@ -30,9 +30,16 @@ class Campus
     #[ORM\OneToMany(targetEntity: Participant::class, mappedBy: 'campus')]
     private Collection $participants;
 
+    /**
+     * @var Collection<int, Sortie>
+     */
+    #[ORM\OneToMany(targetEntity: Sortie::class, mappedBy: 'campus')]
+    private Collection $sorties;
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
+        $this->sorties = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -76,6 +83,36 @@ class Campus
             // set the owning side to null (unless already changed)
             if ($participant->getCampus() === $this) {
                 $participant->setCampus(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Sortie>
+     */
+    public function getSorties(): Collection
+    {
+        return $this->sorties;
+    }
+
+    public function addSorty(Sortie $sorty): static
+    {
+        if (!$this->sorties->contains($sorty)) {
+            $this->sorties->add($sorty);
+            $sorty->setCampus($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSorty(Sortie $sorty): static
+    {
+        if ($this->sorties->removeElement($sorty)) {
+            // set the owning side to null (unless already changed)
+            if ($sorty->getCampus() === $this) {
+                $sorty->setCampus(null);
             }
         }
 
