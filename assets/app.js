@@ -7,4 +7,11 @@ import './stimulus_bootstrap.js';
  */
 import './styles/app.css';
 
+/* Flowbite CSS */
+import 'flowbite/dist/flowbite.min.css';
+
+/* Flowbite for Tailwind css */
+import { initFlowbite } from 'flowbite';
+document.addEventListener('turbo:load', initFlowbite);
+
 console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');
