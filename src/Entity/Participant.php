@@ -3,49 +3,50 @@
 namespace App\Entity;
 
 use App\Repository\ParticipantRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
+#[UniqueEntity(fields: ['mail'], message: 'Ce compte mail existe déjà.')]
 #[ORM\Entity(repositoryClass: ParticipantRepository::class)]
-class Participant
+class Participant implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Merci de saisir un nom')]
+    #[Assert\Length(min:2, max: 50)]
+    #[ORM\Column(length: 50)]
     private ?string $nom = null;
 
-    #[ORM\Column(length: 255)]
+
+    #[Assert\NotBlank(message: 'Merci de saisir un prénom')]
+    #[Assert\Length(min: 2, max: 50)]
+    #[ORM\Column(length: 50)]
     private ?string $prenom = null;
 
-    #[ORM\Column(length: 10, nullable: true)]
+    #[Assert\Length(max: 20)]
+    #[ORM\Column(length: 20, nullable: true)]
     private ?string $telephone = null;
 
-    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Merci de saisir une adresse e-mail')]
+    #[Assert\Email(message: 'Cette adresse e-mail n\'est pas valide')]
+    #[Assert\Length(max: 80)]
+    #[ORM\Column(length: 80, unique: true)]
     private ?string $mail = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $motPasse = null;
+    private ?string $password = null;
 
     #[ORM\Column]
-    private ?bool $administrateur = null;
+    private bool $admin = false;
 
-    /**
-     * @var Collection<int, Sortie>
-     */
-    #[ORM\ManyToMany(targetEntity: Sortie::class, inversedBy: 'participants')]
-    private Collection $sortie;
-
-    #[ORM\ManyToOne(inversedBy: 'participants')]
-    private ?Campus $campus = null;
-
-    public function __construct()
-    {
-        $this->sortie = new ArrayCollection();
-    }
+    #[ORM\Column]
+    private bool $actif = true;
 
     public function getId(): ?int
     {
@@ -100,63 +101,54 @@ class Participant
         return $this;
     }
 
-    public function getMotPasse(): ?string
+    public function getPassword(): ?string
     {
-        return $this->motPasse;
+        return $this->password;
     }
 
-    public function setMotPasse(string $motPasse): static
+    public function setPassword(string $password): static
     {
-        $this->motPasse = $motPasse;
+        $this->password = $password;
 
         return $this;
     }
 
-    public function isAdministrateur(): ?bool
+    public function isAdmin(): ?bool
     {
-        return $this->administrateur;
+        return $this->admin;
     }
 
-    public function setAdministrateur(bool $administrateur): static
+    public function setAdmin(bool $admin): static
     {
-        $this->administrateur = $administrateur;
+        $this->admin = $admin;
 
         return $this;
     }
 
-    /**
-     * @return Collection<int, Sortie>
-     */
-    public function getSortie(): Collection
+    public function isActif(): ?bool
     {
-        return $this->sortie;
+        return $this->actif;
     }
 
-    public function addSortie(Sortie $sortie): static
+    public function setActif(bool $actif): static
     {
-        if (!$this->sortie->contains($sortie)) {
-            $this->sortie->add($sortie);
-        }
+        $this->actif = $actif;
 
         return $this;
     }
 
-    public function removeSortie(Sortie $sortie): static
+    public function getUserIdentifier(): string
     {
-        $this->sortie->removeElement($sortie);
-
-        return $this;
+        return (string)$this->mail;
     }
 
-    public function getCampus(): ?Campus
+    public function getRoles(): array
     {
-        return $this->campus;
+        return $this->admin ? ['ROLE_USER', 'ROLE_ADMIN'] : ['ROLE_USER'];
     }
 
-    public function setCampus(?Campus $campus): static
+    public function eraseCredentials(): void
     {
-        $this->campus = $campus;
-
-        return $this;
+        // Rien à effacer pour l'instant
     }
 }
