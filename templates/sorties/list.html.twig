@@ -1,0 +1,96 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Sorties | {{ parent() }}{% endblock %}
+
+
+{% block body %}
+    <h2>Mes Sorties!</h2>
+
+    <form method="get" action="{{ path('liste') }}">
+        <select name ="campusId"  onchange="this.form.submit()"
+                class="bg-github-dark-gray text-heading border border-gray-700 rounded-lg px-3 py-2 focus:outline-none">
+            {% for campus in campusList %}
+                <option value="{{ campus.id }}"
+                    {% if campusSelectionne and campus.id == campusSelectionne.id %}
+                        selected
+                    {% endif %}>
+                    {{ campus.nom }}
+                </option>
+            {% endfor %}
+        </select>
+    </form>
+
+    <table class="w-full text-left text-body border border-gray-700 rounded-lg overflow-hidden">
+        <thead class="w-full text-left text-body border border-gray-700 rounded-lg overflow-hidden">
+        <tr>
+            <th class="px-4 py-3 border-b border-gray-700">Nom de la sortie</th>
+            <th class="px-4 py-3 border-b border-gray-700">Date de la sortie</th>
+            <th class="px-4 py-3 border-b border-gray-700">Clôture</th>
+            <th class="px-4 py-3 border-b border-gray-700">Inscrits/Places</th>
+            <th class="px-4 py-3 border-b border-gray-700">État</th>
+            <th class="px-4 py-3 border-b border-gray-700">Inscrit</th>
+            <th class="px-4 py-3 border-b border-gray-700">Organisateur</th>
+            <th class="px-4 py-3 border-b border-gray-700">Actions</th>
+        </tr>
+        </thead>
+        <tbody class="bg-github-dark-gray divide-y divide-gray-700">
+        {% for sortie in sorties %}
+            {# Variables locales #}
+            {% set estOrganisateur = sortie.organisateur == app.user %}
+            {% set estInscrit = sortie.participants.contains(app.user) %}
+
+            <tr>
+                <td class="px-4 py-3">{{ sortie.nom }}</td>
+                <td class="px-4 py-3">{{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</td>
+
+                {# Faire attention a : dateLimiteInscription est nullable #}
+                <td class="px-4 py-3">
+                    {{ sortie.dateLimiteInscription ? sortie.dateLimiteInscription|date('d/m/Y') : '-' }}
+                </td>
+
+                <td class="px-4 py-3">{{ sortie.participants|length }} / {{ sortie.nbInscriptionMax }}</td>
+                <td class="px-4 py-3">{{ sortie.etat.libelle }}</td>
+
+                {# Colonne "Inscrit" : On met une croix si l'utilisateur est incrit #}
+                <td class="px-4 py-3">{{ estInscrit ? 'X' : '' }}</td>
+
+                <td class="px-4 py-3">{{ sortie.organisateur.prenom }} {{ sortie.organisateur.nom }}</td>
+
+                <td class="px-4 py-3">
+                    {# TODO a remplacer par une vraie routes #}
+                    <a href="#">Afficher</a>
+
+                    {# TODO a remplacer par une vraie routes #}
+                    {% if estOrganisateur and sortie.etat.value == 'EnCreation' %}
+                        <a href="#">Modifier</a>
+                        <a href="#">Publier</a>
+                    {% endif %}
+
+                    {# TODO a remplacer par une vraie routes #}
+                    {% if estOrganisateur and sortie.etat.value == 'Ouverte' %}
+                        <a href="#">Annuler</a>
+                    {% endif %}
+
+                    {# TODO a remplacer par une vraie routes #}
+                    {# Inscription possible : sortie ouverte, pas déjà inscrit, places restantes, date limite non dépassée #}
+                    {% if sortie.etat.value == 'Ouverte'
+                        and not estInscrit
+                        and sortie.participants|length < sortie.nbInscriptionMax
+                        and (sortie.dateLimiteInscription is null or sortie.dateLimiteInscription > date()) %}
+                        <a href="#">S'inscrire</a>
+                    {% endif %}
+
+                    {# TODO a remplacer par une vraie routes #}
+                    {% if estInscrit and sortie.etat.value == 'Ouverte' %}
+                        <a href="#">Se désister</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            {# TODO généré par IA, a vérifier #}
+            {# colspan aligné sur le nombre de colonnes (8) #}
+            <tr><td colspan="8" class="px-4 py-3 text-center">Aucune sortie à afficher.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

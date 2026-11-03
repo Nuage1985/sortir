@@ -17,10 +17,13 @@ enum EtatSortie: string
     public function libelle(): string
     {
         return match ($this) {
-            self::EnCreation => 'EnCreation',
+            self::EnCreation => 'En Creation',
             self::Ouverte => 'Ouverte',
             self::Cloturee => 'Clôturée',
+            self::EnCours => 'En cours',
+            self::Terminee => 'Terminée',
             self::Annulee => 'Annulée',
+            self::Historisee => 'Historisée',
         };
     }
 }
