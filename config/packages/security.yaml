@@ -22,6 +22,10 @@ security:
                 login_path: main_home
                 check_path: main_home
                 enable_csrf: true
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800 # 1 week in seconds
+                path: /
             logout:
                 path: app_logout
                 # where to redirect after logout
