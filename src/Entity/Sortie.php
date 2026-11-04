@@ -49,6 +49,21 @@ class Sortie
     #[ORM\ManyToMany(targetEntity: Participant::class, mappedBy: 'sorties')]
     private Collection $participants;
 
+    #[ORM\ManyToOne(targetEntity: Participant::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Participant $organisateur = null;
+
+    public function getOrganisateur(): ?Participant
+    {
+        return $this->organisateur;
+    }
+
+    public function setOrganisateur(?Participant $organisateur): self
+    {
+        $this->organisateur = $organisateur;
+        return $this;
+    }
+
     #[ORM\ManyToOne(inversedBy: 'sorties')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Campus $campus = null;

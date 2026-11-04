@@ -34,6 +34,7 @@ class ParticipantFixtures extends Fixture implements DependentFixtureInterface
             ->setCampus($this->getReference('campus-rennes', Campus::class));
         $user->setPassword($this->passwordHasher->hashPassword($user, 'password'));
         $manager->persist($user);
+        $this->addReference('participant-marie', $user);
 
         $admin = new Participant();
         $admin->setPseudo('CoachAdmin')
@@ -45,6 +46,7 @@ class ParticipantFixtures extends Fixture implements DependentFixtureInterface
             ->setCampus($this->getReference('campus-nantes', Campus::class));
         $admin->setPassword($this->passwordHasher->hashPassword($admin, 'password'));
         $manager->persist($admin);
+        $this->addReference('participant-paul', $admin);
 
         $manager->flush();
     }
