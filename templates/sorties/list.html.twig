@@ -7,7 +7,7 @@
     <h2>Mes Sorties!</h2>
 
     <form method="get" action="{{ path('liste') }}">
-        <select name ="campusId"  onchange="this.form.submit()"
+        <select name ="campusId"  id="campusId"
                 class="bg-github-dark-gray text-heading border border-gray-700 rounded-lg px-3 py-2 focus:outline-none">
             {% for campus in campusList %}
                 <option value="{{ campus.id }}"
@@ -18,6 +18,22 @@
                 </option>
             {% endfor %}
         </select>
+
+        <label for="nom">Le nom de la sortie contient</label>
+        <input type="search" name="nom" id="nom" placeholder="search" value="{{ filtres.nom }}">
+
+        <label for="dateDebut">Entre</label>
+        <input type="date" name="dateDebut" id="dateDebut" value="{{ filtres.dateDebut }}">
+        <label for="dateFin">et</label>
+        <input type="date" name="dateFin" id="dateFin" value="{{ filtres.dateFin }}">
+
+        {# Les cases cochées sont réaffichées après la recherche #}
+        <label><input type="checkbox" name="organisateur" value="1" {{ filtres.organisateur ? 'checked' }}> Sorties dont je suis l'organisateur/trice</label>
+        <label><input type="checkbox" name="inscrit" id="inscrit" value="1" {{ filtres.inscrit ? 'checked' }}> Sorties auxquelles je suis inscrit/e</label>
+        <label><input type="checkbox" name="nonInscrit" id="nonInscrit" value="1" {{ filtres.nonInscrit ? 'checked' }}> Sorties auxquelles je ne suis pas inscrit/e</label>
+        <label><input type="checkbox" name="terminees" value="1" {{ filtres.terminees ? 'checked' }}> Sorties terminées</label>
+
+        <button type="submit">Rechercher</button>
     </form>
 
     <table class="w-full text-left text-body border border-gray-700 rounded-lg overflow-hidden">
@@ -93,4 +109,23 @@
         {% endfor %}
         </tbody>
     </table>
+
+
+    <script>
+        // Exclusivité mutuelle : cocher l'une des deux cases décoche automatiquement l'autre
+        const inscrit = document.getElementById('inscrit');
+        const nonInscrit = document.getElementById('nonInscrit');
+
+        inscrit.addEventListener('change', () => {
+            if (inscrit.checked) {
+                nonInscrit.checked = false;
+            }
+        });
+
+        nonInscrit.addEventListener('change', () => {
+            if (nonInscrit.checked) {
+                inscrit.checked = false;
+            }
+        });
+    </script>
 {% endblock %}

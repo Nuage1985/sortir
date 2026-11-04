@@ -32,7 +32,7 @@ class SortieServiceImpl implements SortieService
             return []; //La requête attend un objet Campus non null, donc on lui retourne une valeur vide pour eviter l'erreur
         }
 
-        return $this->sortieRepository->findVisiblesByCampus($campus, $participant);
+        return $this->sortieRepository->findFilteredSorties($campus, $participant, $filtres);
     }
     public function isVisibleForParticipant(Sortie $sortie, Participant $participant): bool
     {
