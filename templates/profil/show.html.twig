@@ -5,31 +5,46 @@
 {% endblock %}
 
 {% block body %}
+    <h1 class="text-center text-3xl text-heading font-semibold whitespace-nowrap my-8">{{ participant.pseudo }}</h1>
+
     <div class="max-w-xl mx-auto bg-github-dark-gray p-6 rounded-lg border-3 border-github-dark-blue">
-        <h1 class="text-center text-3xl text-heading font-semibold whitespace-nowrap my-8">{{ participant.pseudo }}</h1>
+
+        <div class="flex justify-center mb-4">
+            {% if participant.filename %}
+                <img src="{{ asset(app_public_images_directory ~'/'~participant.filename) }}"
+                     class="rounded-full w-32 h-32 md:w-48 md:h-48" alt="Photo de profil de {{ participant.pseudo }}"/>
+            {% else %}
+                <img class="w-10 h-10 rounded-full ring-3 ring-github-dark-blue flex-shrink-0"
+                     src="{{ asset('img/default_profile.png') }}"
+                     alt="Silhouette de profil utilisateur, par défaut">
+            {% endif %}
+        </div>
+
         <dl class="max-w-lg mx-auto text-heading divide-y divide-default">
             <div class="flex flex-col pb-3">
-                <dt class="mb-1 text-body">Campus : </dt>
+                <dt class="mb-1 text-body">Campus :</dt>
                 <dd class="text-lg font-medium">{{ participant.campus.nom }}</dd>
             </div>
             <div class="flex flex-col py-3">
-                <dt class="mb-1 text-body">Prénom : </dt>
+                <dt class="mb-1 text-body">Prénom :</dt>
                 <dd class="text-lg font-medium">{{ participant.prenom }}</dd>
             </div>
             <div class="flex flex-col py-3">
-                <dt class="mb-1 text-body">Nom : </dt>
+                <dt class="mb-1 text-body">Nom :</dt>
                 <dd class="text-lg font-medium">{{ participant.nom }}</dd>
             </div>
             <div class="flex flex-col py-3">
-                <dt class="mb-1 text-body">Téléphone : </dt>
+                <dt class="mb-1 text-body">Téléphone :</dt>
                 <dd class="text-lg font-medium">{{ participant.telephone }}</dd>
             </div>
             <div class="flex flex-col pt-3">
-                <dt class="mb-1 text-body">E-mail : </dt>
-                <dd class="text-lg font-medium">{{participant.mail }}</dd>
+                <dt class="mb-1 text-body">E-mail :</dt>
+                <dd class="text-lg font-medium">{{ participant.mail }}</dd>
             </div>
         </dl>
-        <button class="my-8 text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-500 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none">
+
+        <button
+            class="my-8 text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-500 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none">
             <a href="{{ path('main_home') }}">Retour</a>
         </button>
     </div>

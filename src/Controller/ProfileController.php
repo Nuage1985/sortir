@@ -7,6 +7,8 @@ use App\Form\ProfileType;
 use App\Repository\ParticipantRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -38,6 +40,22 @@ final class ProfileController extends AbstractController
             if (!empty($plainPassword)) {
                 $hashed = $passwordHasher->hashPassword($participant, $plainPassword);
                 $participant->setPassword($hashed);
+            }
+
+            /** @var UploadedFile $image */
+            $imageFile = $profilForm->get('image')->getData();
+            if ($imageFile) {
+                $newFilename = uniqid().'.'.$imageFile->guessExtension();
+                // On déplace le fichier uploader dans un répertoire présent dans "public".
+                try {
+                    $imageFile->move(
+                        $this->getParameter('app.project_images_directory'),
+                        $newFilename
+                    );
+                    $participant->setFilename($newFilename);
+                } catch (FileException $e) {
+                    // ... handle exception
+                }
             }
 
             $entityManager->persist($participant);

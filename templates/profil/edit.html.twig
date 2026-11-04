@@ -4,6 +4,18 @@
     <h1 class="text-center text-3xl text-heading font-semibold whitespace-nowrap mb-8">Mon Profil</h1>
 
     <div class="max-w-xl mx-auto bg-github-dark-gray p-6 rounded-lg border-3 border-github-dark-blue">
+
+        <div class="flex justify-center mb-4">
+            {% if participant.filename %}
+                <img src="{{ asset(app_public_images_directory ~'/'~participant.filename) }}"
+                     class="rounded-full w-32 h-32 md:w-48 md:h-48" alt="Photo de profil de {{ participant.pseudo }}"/>
+            {% else %}
+                <img class="w-10 h-10 rounded-full ring-3 ring-github-dark-blue flex-shrink-0"
+                     src="{{ asset('img/default_profile.png') }}"
+                     alt="Silhouette de profil utilisateur, par défaut">
+            {% endif %}
+        </div>
+
         {{ form_start(profilForm) }}
 
         <div class="mb-5">
@@ -15,40 +27,55 @@
             <span class="text-red-500 text-xs mb-0.5">*</span>
             {{ form_label(profilForm.pseudo, null, {'label_attr': {'class': 'block mb-2.5 text-sm font-medium text-heading'}}) }}
             {{ form_widget(profilForm.pseudo) }}
+            {{ form_errors(profilForm.pseudo) }}
         </div>
 
         <div class="mb-5">
             <span class="text-red-500 text-xs mb-0.5">*</span>
             {{ form_label(profilForm.prenom, null, {'label_attr': {'class': 'block mb-2.5 text-sm font-medium text-heading'}}) }}
             {{ form_widget(profilForm.prenom) }}
+            {{ form_errors(profilForm.prenom) }}
         </div>
 
         <div class="mb-5">
             <span class="text-red-500 text-xs mb-0.5">*</span>
             {{ form_label(profilForm.nom, null, {'label_attr': {'class': 'block mb-2.5 text-sm font-medium text-heading'}}) }}
             {{ form_widget(profilForm.nom) }}
+            {{ form_errors(profilForm.nom) }}
         </div>
 
         <div class="mb-5">
             {{ form_label(profilForm.telephone) }}
+            <p class="text-xs text-gray-400 mt-1">Votre numéro de téléphone n'est pas obligatoire.</p>
             {{ form_widget(profilForm.telephone) }}
+            {{ form_errors(profilForm.telephone) }}
         </div>
 
         <div class="mb-5">
             <span class="text-red-500 text-xs mb-0.5">*</span>
             {{ form_label(profilForm.mail, null, {'label_attr': {'class': 'block mb-2.5 text-sm font-medium text-heading'}}) }}
             {{ form_widget(profilForm.mail) }}
+            {{ form_errors(profilForm.mail) }}
         </div>
 
         <div class="mb-5">
             {{ form_label(profilForm.password.first) }}
             <p class="text-xs text-gray-400 mt-1">La modification du mot de passe n'est pas obligatoire.</p>
             {{ form_widget(profilForm.password.first) }}
+            {{ form_errors(profilForm.password.first) }}
         </div>
 
         <div class="mb-5">
             {{ form_label(profilForm.password.second) }}
             {{ form_widget(profilForm.password.second) }}
+            {{ form_errors(profilForm.password.second) }}
+        </div>
+
+        <div class="mb-5">
+            {{ form_label(profilForm.image, null, {'label_attr': {'class': 'block mb-2.5 text-sm font-medium text-heading'}}) }}
+            <p class="text-xs text-gray-400 mt-1">La photo de profil n'est pas obligatoire.</p>
+            {{ form_widget(profilForm.image) }}
+            {{ form_errors(profilForm.image) }}
         </div>
 
         {{ form_rest(profilForm) }}
@@ -57,7 +84,8 @@
                 class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-500 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none">
             Modifier
         </button>
-        <button class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-500 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none">
+        <button
+            class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-500 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none">
             Retour
         </button>
 

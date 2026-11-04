@@ -10,4 +10,8 @@
     --color-github-dark-blue: #051D4D;
 }
 
+#profile_image {
+    color: var(--color-default);
+}
+
 

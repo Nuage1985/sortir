@@ -8,11 +8,13 @@ use App\Entity\Sortie;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Image;
 
 class ProfileType extends AbstractType
 {
@@ -64,6 +66,23 @@ class ProfileType extends AbstractType
                 'second_options' => ['label' => 'Confirmation du mot de passe', 'label_attr' => ['class' => $labelAttr], 'attr' => ['class' => $inputAttr]],
                 'mapped' => false,
                 'required' => false,
+            ])
+            ->add('image', FileType::class, [
+                'label' => 'Photo de profil',
+                'label_attr' => ['class' => $labelAttr],
+                'attr' => ['class' => $inputAttr],
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new Image([
+                        'maxSize' => '1M',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                        ],
+                        'mimeTypesMessage' => 'Merci de choisir une image valide (jpeg, png, jpg), taille maximum 1Mo',
+                    ])
+                ],
             ])
         ;
     }

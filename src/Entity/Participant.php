@@ -38,6 +38,8 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $prenom = null;
 
     #[Assert\Length(max: 20)]
+    #[Assert\Regex("/^(?:\\+33|0033|0)[1-9]\\d{8}$/",
+        message: 'Veuillez utiliser un numéro de téléphone valide')]
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $telephone = null;
 
@@ -65,6 +67,9 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\ManyToMany(targetEntity: Sortie::class, inversedBy: 'participants')]
     private Collection $sorties;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $filename = null;
 
     public function __construct()
     {
@@ -219,6 +224,18 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPseudo(string $pseudo): static
     {
         $this->pseudo = $pseudo;
+
+        return $this;
+    }
+
+    public function getFilename(): ?string
+    {
+        return $this->filename;
+    }
+
+    public function setFilename(?string $filename): static
+    {
+        $this->filename = $filename;
 
         return $this;
     }
