@@ -6,7 +6,7 @@
 
 {% block body %}
     {% if not app.user %}
-        <form class="max-w-sm mx-auto bg-github-dark-gray p-4 m-8 rounded-lg" action="{{ path('login_check') }}"
+        <form class="max-w-sm mx-auto bg-github-dark-gray p-4 m-8 rounded-lg border-3 border-github-dark-blue" action="{{ path('login_check') }}"
               method="post">
             {% if error %}
                 <div class="text-red-500 mb-4">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
@@ -37,6 +37,10 @@
     {% endif %}
 
     {% if is_granted('ROLE_USER') %}
+        <div class="bg-github-dark-gray text-default m-4 p-4 w-fit ml-auto rounded-lg border-3 border-github-dark-blue">
+            <p class="mb-1">Date du jour : {{ "now"|date("d/m/Y") }}</p>
+            <p>Participant : {{ app.user.prenom }} {{ app.user.nom | first }}.</p>
+        </div>
         <div
             class="relative overflow-x-auto bg-github-dark-gray text-heading shadow-sm rounded-lg border border-gray-600">
             <table class="w-full text-sm text-left text-heading">

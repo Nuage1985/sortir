@@ -51,6 +51,7 @@ class ProfileType extends AbstractType
                 'label' => 'Téléphone',
                 'label_attr' => ['class' => $labelAttr],
                 'attr' => ['class' => $inputAttr],
+                'required' => false,
             ])
             ->add('mail', EmailType::class, [
                 'label' => 'E-mail',
