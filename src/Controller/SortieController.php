@@ -33,18 +33,6 @@ class SortieController extends AbstractController
             $campus = $this->campusRepository->find((int) $campusId);
         }
 
-        // Récupération des filtres du formulaire (valeurs interprétés par le service)
-        $filtres = [
-            'nom'            => trim((string) $request->query->get('nom', '')),
-            'dateDebut'      => $request->query->get('dateDebut'),
-            'dateFin'        => $request->query->get('dateFin'),
-            // Une case non cochée n'est pas envoyée : on convertit donc en booléen
-            'organisateur'   => $request->query->getBoolean('organisateur'),
-            'inscrit'        => $request->query->getBoolean('inscrit'),
-            'nonInscrit'     => $request->query->getBoolean('nonInscrit'),
-            'terminees'      => $request->query->getBoolean('terminees'),
-            ];
-
         $sorties = $this->sortieService->getSortiesFiltered($participant, $campus);
 
         return $this->render('sorties/list.html.twig', [
@@ -52,7 +40,6 @@ class SortieController extends AbstractController
             'campusList' => $this->campusRepository->findAll(),
             //On affiche le campus par défaut
             'campusSelectionne' => $campus ?? $this->sortieService->getCampusByDefault($participant),
-            'filtres' => $filtres,
         ]);
 
     }
