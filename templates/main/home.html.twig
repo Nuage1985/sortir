@@ -53,177 +53,108 @@
                      alt="Silhouette de profil utilisateur, par défaut">
             {% endif %}
         </div>
-        <div
-            class="relative overflow-x-auto bg-github-dark-gray text-heading shadow-sm rounded-lg border border-gray-600">
+        <form method="get" action="{{ path('liste') }}" class="mb-6 flex flex-wrap items-center gap-3 rounded-lg border border-gray-600 bg-github-dark-gray p-4 text-heading">
+            <select name="campusId" id="campusId" class="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-heading focus:outline-none">
+                {% for campus in campusList|default([]) %}
+                    <option value="{{ campus.id }}"
+                        {% if campusSelectionne is defined and campus.id == campusSelectionne.id %}
+                            selected
+                        {% endif %}>
+                        {{ campus.nom }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <label for="nom" class="text-sm">Le nom de la sortie contient</label>
+            <input type="search" name="nom" id="nom" placeholder="search" value="{{ filtres.nom|default('') }}" class="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-heading placeholder:text-gray-400 focus:outline-none">
+
+            <label for="dateDebut" class="text-sm">Entre</label>
+            <input type="date" name="dateDebut" id="dateDebut" value="{{ filtres.dateDebut|default('') }}" class="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-heading focus:outline-none">
+            <label for="dateFin" class="text-sm">et</label>
+            <input type="date" name="dateFin" id="dateFin" value="{{ filtres.dateFin|default('') }}" class="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-heading focus:outline-none">
+
+            <label class="text-sm"><input type="checkbox" name="organisateur" value="1" class="h-4 w-4 rounded text-blue-600 bg-gray-700 border-gray-500" {{ filtres.organisateur|default(false) ? 'checked' }}> Sorties dont je suis l'organisateur/trice</label>
+            <label class="text-sm"><input type="checkbox" name="inscrit" id="inscrit" value="1" class="h-4 w-4 rounded text-blue-600 bg-gray-700 border-gray-500" {{ filtres.inscrit|default(false) ? 'checked' }}> Sorties auxquelles je suis inscrit/e</label>
+            <label class="text-sm"><input type="checkbox" name="nonInscrit" id="nonInscrit" value="1" class="h-4 w-4 rounded text-blue-600 bg-gray-700 border-gray-500" {{ filtres.nonInscrit|default(false) ? 'checked' }}> Sorties auxquelles je ne suis pas inscrit/e</label>
+            <label class="text-sm"><input type="checkbox" name="terminees" value="1" class="h-4 w-4 rounded text-blue-600 bg-gray-700 border-gray-500" {{ filtres.terminees|default(false) ? 'checked' }}> Sorties terminées</label>
+
+            <button type="submit" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">Rechercher</button>
+        </form>
+
+        <div class="relative overflow-x-auto bg-github-dark-gray text-heading shadow-sm rounded-lg border border-gray-600">
             <table class="w-full text-sm text-left text-heading">
                 <thead class="bg-gray-700 border-b border-gray-600">
                 <tr>
-                    <th scope="col" class="px-6 py-3 font-medium">
-                        Nom de la sortie
-                    </th>
-                    <th scope="col" class="px-6 py-3 font-medium">
-                        Date de la sortie
-                    </th>
-                    <th scope="col" class="px-6 py-3 font-medium">
-                        Clôture
-                    </th>
-                    <th scope="col" class="px-6 py-3 font-medium">
-                        Inscrit(s) / Places
-                    </th>
-                    <th scope="col" class="px-6 py-3 font-medium">
-                        État
-                    </th>
-                    <th scope="col" class="px-6 py-3 font-medium">
-                        Inscrit
-                    </th>
-                    <th scope="col" class="px-6 py-3 font-medium">
-                        Organisateur
-                    </th>
-                    <th scope="col" class="px-6 py-3 font-medium">
-                        Action
-                    </th>
+                    <th scope="col" class="px-6 py-3 font-medium">Nom de la sortie</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Date de la sortie</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Clôture</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Inscrit(s) / Places</th>
+                    <th scope="col" class="px-6 py-3 font-medium">État</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Inscrit</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Organisateur</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Action</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr class="bg-github-dark-gray border-b border-gray-600">
-                    <th scope="row" class="px-6 py-4 font-medium text-heading whitespace-nowrap">
-                        Barberousse Aix-en-Provence
-                    </th>
-                    <td class="px-6 py-4">
-                        05/12/2026
-                    </td>
-                    <td class="px-6 py-4">
-                        30/11/2026
-                    </td>
-                    <td class="px-6 py-4">
-                        6 / 6
-                    </td>
-                    <td class="px-6 py-4">
-                        En cours
-                    </td>
-                    <td class="px-6 py-4">
-                        X
-                    </td>
-                    <td class="px-6 py-4">
-                        <a href="#" class="font-medium text-blue-500 hover:underline">Dupond M.</a>
-                    </td>
-                    <td class="px-6 py-4">
-                        <a href="#" class="font-medium text-blue-500 hover:underline">Afficher</a><br>
-                        <a href="#" class="font-medium text-blue-500 hover:underline">Se désister</a>
-                    </td>
-                </tr>
-                <tr class="bg-gray-800 border-b border-gray-600">
-                    <th scope="row" class="px-6 py-4 font-medium text-heading whitespace-nowrap">
-                        Sortie cinéma Arvor Rennes
-                    </th>
-                    <td class="px-6 py-4">
-                        10/11/2026
-                    </td>
-                    <td class="px-6 py-4">
-                        08/11/2026
-                    </td>
-                    <td class="px-6 py-4">
-                        7 / 8
-                    </td>
-                    <td class="px-6 py-4">
-                        Ouverte
-                    </td>
-                    <td class="px-6 py-4">
+                {% for sortie in sorties|default([]) %}
+                    {% set estOrganisateur = sortie.organisateur == app.user %}
+                    {% set estInscrit = sortie.participants.contains(app.user) %}
 
-                    </td>
-                    <td class="px-6 py-4">
-                        <a href="#" class="font-medium text-blue-500 hover:underline">Lomperet A.</a>
-                    </td>
-                    <td class="px-6 py-4">
-                        <a href="#" class="font-medium text-blue-500 hover:underline">Afficher</a><br>
-                        <a href="#" class="font-medium text-blue-500 hover:underline">S'inscrire</a>
-                    </td>
-                </tr>
-                <tr class="bg-github-dark-gray border-b border-gray-600">
-                    <th scope="row" class="px-6 py-4 font-medium text-heading whitespace-nowrap">
-                        John Doe Escape Game Nantes
-                    </th>
-                    <td class="px-6 py-4">
-                        08/11/2026
-                    </td>
-                    <td class="px-6 py-4">
-                        30/10/2026
-                    </td>
-                    <td class="px-6 py-4">
-                        4 / 8
-                    </td>
-                    <td class="px-6 py-4">
-                        Clôturée
-                    </td>
-                    <td class="px-6 py-4">
-                        X
-                    </td>
-                    <td class="px-6 py-4">
-                        <a href="#" class="font-medium text-blue-500 hover:underline">Dupont M.</a>
-                    </td>
-                    <td class="px-6 py-4">
-                        <a href="#" class="font-medium text-blue-500 hover:underline">Afficher</a><br>
-                        <a href="#" class="font-medium text-blue-500 hover:underline">Se désister</a>
-                    </td>
-                </tr>
-                <tr class="bg-gray-800 border-b border-gray-600">
-                    <th scope="row" class="px-6 py-4 font-medium text-heading whitespace-nowrap">
-                        LAN Party Paris
-                    </th>
-                    <td class="px-6 py-4">
-                        11/11/2026
-                    </td>
-                    <td class="px-6 py-4">
-                        04/11/2026
-                    </td>
-                    <td class="px-6 py-4">
-                        14 / 20
-                    </td>
-                    <td class="px-6 py-4">
-                        Ouverte
-                    </td>
-                    <td class="px-6 py-4">
-
-                    </td>
-                    <td class="px-6 py-4">
-                        <a href="#" class="font-medium text-blue-500 hover:underline">Dupond M.</a>
-                    </td>
-                    <td class="px-6 py-4">
-                        <a href="#" class="font-medium text-blue-500 hover:underline">Afficher</a><br>
-                        <a href="#" class="font-medium text-blue-500 hover:underline">S'inscrire</a>
-                        <a href="#" class="font-medium text-blue-500 hover:underline">Annuler</a>
-                    </td>
-                </tr>
-                <tr class="bg-github-dark-gray border-b border-gray-600">
-                    <th scope="row" class="px-6 py-4 font-medium text-heading whitespace-nowrap">
-                        John Doe Escape Game Nantes
-                    </th>
-                    <td class="px-6 py-4">
-                        08/11/2026
-                    </td>
-                    <td class="px-6 py-4">
-                        30/10/2026
-                    </td>
-                    <td class="px-6 py-4">
-                        4 / 8
-                    </td>
-                    <td class="px-6 py-4">
-                        Création
-                    </td>
-                    <td class="px-6 py-4">
-                        X
-                    </td>
-                    <td class="px-6 py-4">
-                        <a href="#" class="font-medium text-blue-500 hover:underline">Dupond M.</a>
-                    </td>
-                    <td class="px-6 py-4">
-                        <a href="#" class="font-medium text-blue-500 hover:underline">Modifier</a><br>
-                        <a href="#" class="font-medium text-blue-500 hover:underline">S'inscrire</a>
-                        <a href="#" class="font-medium text-blue-500 hover:underline">Annuler</a>
-                    </td>
-                </tr>
+                    <tr class="border-b border-gray-600 bg-github-dark-gray">
+                        <th scope="row" class="px-6 py-4 font-medium text-heading whitespace-nowrap">
+                            {{ sortie.nom }}
+                        </th>
+                        <td class="px-6 py-4">{{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</td>
+                        <td class="px-6 py-4">
+                            {{ sortie.dateLimiteInscription ? sortie.dateLimiteInscription|date('d/m/Y') : '-' }}
+                        </td>
+                        <td class="px-6 py-4">{{ sortie.participants|length }} / {{ sortie.nbInscriptionMax }}</td>
+                        <td class="px-6 py-4">{{ sortie.etat.libelle }}</td>
+                        <td class="px-6 py-4">{{ estInscrit ? 'X' : '' }}</td>
+                        <td class="px-6 py-4">
+                            <a href="#" class="font-medium text-blue-500 hover:underline">{{ sortie.organisateur.prenom }} {{ sortie.organisateur.nom }}</a>
+                        </td>
+                        <td class="px-6 py-4">
+                            <a href="#" class="font-medium text-blue-500 hover:underline">Afficher</a>
+                            {% if estOrganisateur and sortie.etat.value == 'EnCreation' %}
+                                <br><a href="#" class="font-medium text-blue-500 hover:underline">Modifier</a>
+                                <br><a href="#" class="font-medium text-blue-500 hover:underline">Publier</a>
+                            {% endif %}
+                            {% if estOrganisateur and sortie.etat.value == 'Ouverte' %}
+                                <br><a href="#" class="font-medium text-blue-500 hover:underline">Annuler</a>
+                            {% endif %}
+                            {% if sortie.etat.value == 'Ouverte' and not estInscrit and sortie.participants|length < sortie.nbInscriptionMax and (sortie.dateLimiteInscription is null or sortie.dateLimiteInscription > date()) %}
+                                <br><a href="#" class="font-medium text-blue-500 hover:underline">S'inscrire</a>
+                            {% endif %}
+                            {% if estInscrit and sortie.etat.value == 'Ouverte' %}
+                                <br><a href="#" class="font-medium text-blue-500 hover:underline">Se désister</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="8" class="px-6 py-4 text-center">Aucune sortie à afficher.</td>
+                    </tr>
+                {% endfor %}
                 </tbody>
             </table>
         </div>
+
+        <script>
+            (() => {
+                const inscrit = document.getElementById('inscrit');
+                const nonInscrit = document.getElementById('nonInscrit');
+
+                // Les deux cases sont mutuellement exclusives
+                if (inscrit && nonInscrit) {
+                    inscrit.addEventListener('change', () => {
+                        if (inscrit.checked) nonInscrit.checked = false;
+                    });
+                    nonInscrit.addEventListener('change', () => {
+                        if (nonInscrit.checked) inscrit.checked = false;
+                    });
+                }
+            })();
+        </script>
     {% endif %}
 {% endblock %}

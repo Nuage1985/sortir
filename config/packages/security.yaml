@@ -20,6 +20,7 @@ security:
             form_login:
                 login_path: main_home
                 check_path: login_check
+                default_target_path: liste   # redirection après connexion
                 enable_csrf: true
             remember_me:
                 secret: '%kernel.secret%'
