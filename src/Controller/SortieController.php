@@ -45,9 +45,9 @@ class SortieController extends AbstractController
             'terminees'      => $request->query->getBoolean('terminees'),
             ];
 
-        $sorties = $this->sortieService->getSortiesFiltered($participant, $campus);
+        $sorties = $this->sortieService->getSortiesFiltered($participant, $campus, $filtres);
 
-        return $this->render('sorties/list.html.twig', [
+        return $this->render('main/home.html.twig', [
             'sorties' => $sorties,
             'campusList' => $this->campusRepository->findAll(),
             //On affiche le campus par défaut

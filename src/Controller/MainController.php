@@ -12,6 +12,12 @@ final class MainController extends AbstractController
     #[Route('/', name: 'main_home')]
     public function home(AuthenticationUtils $authenticationUtils): Response
     {
+
+        // Si l'utilisateur est déjà authentifié, on l'envoie directement sur la liste des sorties
+        if ($this->getUser()) {
+            return $this->redirectToRoute('liste');
+        }
+
         $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
 
