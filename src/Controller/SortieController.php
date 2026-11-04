@@ -57,10 +57,18 @@ class SortieController extends AbstractController
 
     }
 
-    //TODO ajouter le filtrage
-    //TODO modifier
-    //TODO publier
-    //TODO annuler
-    //TODO Se desister
+    #[Route('/detail/{id}', name: 'sortie_detail', methods: ['GET'])]
+    public function displaySortieDetail(int $id, SortieService $sortieService, Request $request): Response
+    {
+        $sortie = $this->sortieService->getSortieDetails($id);
+
+        if (!$sortie) {
+            throw $this->createNotFoundException('Sortie introuvable.');
+        }
+
+        return $this->render('sorties/sortie_detail.html.twig', [
+            'sortie' => $sortie,
+        ]);
+    }
 
 }
