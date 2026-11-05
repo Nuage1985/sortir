@@ -34,4 +34,6 @@ interface SortieService
      */
     public function getLieuxData(): array;
 
+    public function publishSortie(int $id);
+
 }

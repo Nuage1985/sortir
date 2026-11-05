@@ -37,6 +37,18 @@
         </form>
     {% endif %}
 
+    {% for message in app.flashes('success') %}
+        <div class="mb-4 rounded bg-green-100 px-4 py-2 text-green-700">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    {% for message in app.flashes('error') %}
+        <div class="mb-4 rounded bg-red-100 px-4 py-2 text-red-700">
+            {{ message }}
+        </div>
+    {% endfor %}
+
     {% if is_granted('ROLE_USER') %}
         <div
             class="bg-github-dark-gray text-default m-4 p-4 w-fit ml-auto rounded-lg border-3 border-github-dark-blue flex items-center justify-between gap-4">
@@ -136,7 +148,10 @@
                             <a href="{{ path('sortie_detail', { id: sortie.id }) }}" class="font-medium text-blue-500 hover:underline">Afficher</a>
                             {% if estOrganisateur and sortie.etat.value == 'EnCreation' %}
                                 <br><a href="#" class="font-medium text-blue-500 hover:underline">Modifier</a>
-                                <br><a href="#" class="font-medium text-blue-500 hover:underline">Publier</a>
+                                <br><form method="post" action="{{ path('publier_sortie', { id: sortie.id }) }}">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('publish_sortie_' ~ sortie.id) }}">
+                                        <button type="submit" class="font-medium text-blue-500 hover:underline">Publier</button>
+                                    </form>
                             {% endif %}
                             {% if estOrganisateur and sortie.etat.value == 'Ouverte' %}
                                 <br><a href="#" class="font-medium text-blue-500 hover:underline">Annuler</a>

@@ -16,7 +16,8 @@ readonly class SortieServiceImpl implements SortieService
 
     public function __construct(
         private SortieRepository $sortieRepository,
-        private LieuRepository    $lieuRepository
+        private LieuRepository    $lieuRepository,
+        private EntityManagerInterface $entityManager
     ) {
     }
 
@@ -72,5 +73,22 @@ readonly class SortieServiceImpl implements SortieService
     public function getSortieDetails(int $id): ?Sortie
     {
         return $this->sortieRepository->find($id);
+    }
+
+    public function publishSortie(int $id)
+    {
+        $sortie = $this->sortieRepository->find($id);
+
+        if (!$sortie) {
+            return null;
+        }
+
+        // On vérifie l'état de la Sortie, seul une sorite en cré"ation peut être ouverte
+        if ($sortie->getEtat() === EtatSortie::EnCreation) {
+            $sortie->setEtat(EtatSortie::Ouverte);
+            $this->entityManager->flush(); //On envoie les Upsert/Delete dans la base
+        }
+
+        return $sortie;
     }
 }

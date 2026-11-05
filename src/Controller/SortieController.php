@@ -62,7 +62,7 @@ class SortieController extends AbstractController
     }
 
     #[Route('/detail/{id}', name: 'sortie_detail', methods: ['GET'])]
-    public function displaySortieDetail(int $id, SortieService $sortieService, Request $request): Response
+    public function displaySortieDetail(int $id): Response
     {
         $sortie = $this->sortieService->getSortieDetails($id);
 
@@ -191,7 +191,26 @@ class SortieController extends AbstractController
         return $this->redirectToRoute('main_home');
     }
 
-    // TODO publier
-    // TODO annuler
-    // TODO Se desister
+    #[Route('/{id}/publier', name: 'publier_sortie', requirements: ['id' => '\d+'], methods: ['POST'])]
+    public function publishSortie (int $id, Request $request): Response{
+
+        $token = $request->request->get('_token');
+
+        if (!$this->isCsrfTokenValid('publish_sortie_' . $id, $token)) {
+            $this->addFlash('error', 'Impossible de publier cette sortie.');
+            throw $this->createAccessDeniedException();
+        }
+
+        $sortie = $this->sortieService->publishSortie($id);
+
+        if (!$sortie) {
+            $this->addFlash('error', 'Impossible de publier cette sortie.');
+            throw $this->createNotFoundException('Sortie introuvable.');
+        }
+
+        $this->addFlash('success', 'Sortie publiée.');
+        return $this->redirectToRoute('main_home');
+    }
+
+
 }
