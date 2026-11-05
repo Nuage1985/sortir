@@ -36,4 +36,6 @@ interface SortieService
 
     public function publishSortie(int $id);
 
+    public function signUpSortie(Sortie $sortie, Participant $participant): bool;
+
 }

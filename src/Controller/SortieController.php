@@ -212,5 +212,30 @@ class SortieController extends AbstractController
         return $this->redirectToRoute('main_home');
     }
 
+    #[Route('/{id}/inscrire', name: 'sortie_inscrire', methods: ['POST'])]
+    public function singUp(Sortie $sortie, Request $request): Response
+    {
+        $user = $this->getUser();
+
+        if (!$user) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $token = $request->request->get('_token');
+
+        if (!$this->isCsrfTokenValid('inscrire_sortie_' . $sortie->getId(), $token)) {
+            $this->addFlash('error', 'Jeton CSRF invalide.');
+            return $this->redirectToRoute('main_home');
+        }
+
+        if (!$this->sortieService->signUpSortie($sortie, $user)) {
+            $this->addFlash('error', 'Impossible de s’inscrire à cette sortie.');
+            return $this->redirectToRoute('main_home');
+        }
+
+        $this->addFlash('success', 'Inscription réussie.');
+        return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
+    }
+
 
 }

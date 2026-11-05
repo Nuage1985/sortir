@@ -91,4 +91,22 @@ readonly class SortieServiceImpl implements SortieService
 
         return $sortie;
     }
+
+    public function signUpSortie(Sortie $sortie, Participant $participant): bool
+    {
+        if($sortie->getParticipants()->contains($participant)){
+            return false;
+        }
+        if($sortie->getEtat()!=EtatSortie::Ouverte){
+            return false;
+        }
+
+        if($sortie->getParticipants()->count()>= $sortie->getNbInscriptionMax()){
+            return false;
+        }
+
+        $sortie->addParticipant($participant);
+        $this->entityManager->flush();
+        return true;
+    }
 }
