@@ -7,12 +7,13 @@
     <h2>Mes Sorties!</h2>
 
     <form method="get" action="{{ path('liste') }}">
-        <select name ="campusId"  id="campusId"
+        <label for="campusId">Campus : </label>
+        <select name="campusId" id="campusId"
                 class="bg-github-dark-gray text-heading border border-gray-700 rounded-lg px-3 py-2 focus:outline-none">
             {% for campus in campusList %}
                 <option value="{{ campus.id }}"
                     {% if campusSelectionne and campus.id == campusSelectionne.id %}
-                        selected
+                selected
                     {% endif %}>
                     {{ campus.nom }}
                 </option>
@@ -28,9 +29,12 @@
         <input type="date" name="dateFin" id="dateFin" value="{{ filtres.dateFin }}">
 
         {# Les cases cochées sont réaffichées après la recherche #}
-        <label><input type="checkbox" name="organisateur" value="1" {{ filtres.organisateur ? 'checked' }}> Sorties dont je suis l'organisateur/trice</label>
-        <label><input type="checkbox" name="inscrit" id="inscrit" value="1" {{ filtres.inscrit ? 'checked' }}> Sorties auxquelles je suis inscrit/e</label>
-        <label><input type="checkbox" name="nonInscrit" id="nonInscrit" value="1" {{ filtres.nonInscrit ? 'checked' }}> Sorties auxquelles je ne suis pas inscrit/e</label>
+        <label><input type="checkbox" name="organisateur" value="1" {{ filtres.organisateur ? 'checked' }}> Sorties dont
+            je suis l'organisateur/trice</label>
+        <label><input type="checkbox" name="inscrit" id="inscrit" value="1" {{ filtres.inscrit ? 'checked' }}> Sorties
+            auxquelles je suis inscrit/e</label>
+        <label><input type="checkbox" name="nonInscrit" id="nonInscrit" value="1" {{ filtres.nonInscrit ? 'checked' }}>
+            Sorties auxquelles je ne suis pas inscrit/e</label>
         <label><input type="checkbox" name="terminees" value="1" {{ filtres.terminees ? 'checked' }}> Sorties terminées</label>
 
         <button type="submit">Rechercher</button>
@@ -105,7 +109,9 @@
         {% else %}
             {# TODO généré par IA, a vérifier #}
             {# colspan aligné sur le nombre de colonnes (8) #}
-            <tr><td colspan="8" class="px-4 py-3 text-center">Aucune sortie à afficher.</td></tr>
+            <tr>
+                <td colspan="8" class="px-4 py-3 text-center">Aucune sortie à afficher.</td>
+            </tr>
         {% endfor %}
         </tbody>
     </table>

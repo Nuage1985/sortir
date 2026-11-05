@@ -61,7 +61,7 @@ class SortieController extends AbstractController
 
     }
 
-    #[Route('/creer', name: 'sorties_creer', methods: ['GET', 'POST'])]
+    #[Route('/creer', name: 'sortie_creer', methods: ['GET', 'POST'])]
     public function createOuting(Request $request, EntityManagerInterface $entityManager): Response
     {
         // Créer une nouvelle sortie
@@ -101,27 +101,82 @@ class SortieController extends AbstractController
             return $this->redirectToRoute('main_home');
         }
 
-        // Récupérer les lieux avec leurs détails pour le JavaScript
-        $lieux = $entityManager->getRepository(\App\Entity\Lieu::class)->findAll();
-        $lieuxData = [];
-        foreach ($lieux as $lieu) {
-            $lieuxData[$lieu->getId()] = [
-                'rue' => $lieu->getRue(),
-                'ville' => $lieu->getVille() ? $lieu->getVille()->getNom() : '',
-                'codePostal' => $lieu->getVille() ? $lieu->getVille()->getCodePostal() : '',
-                'latitude' => $lieu->getLatitude(),
-                'longitude' => $lieu->getLongitude(),
-            ];
-        }
-
         return $this->render('sorties/create.html.twig', [
             'sortie' => $sortie,
             'sortieForm' => $sortieForm,
-            'lieuxData' => $lieuxData,
+            'lieuxData' => $this->sortieService->getLieuxData(),
         ]);
     }
 
-    // TODO modifier
+    #[Route('/{id}/modifier', name: 'sortie_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    public function editSortie(Sortie $sortie, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        // Vérifier que l'utilisateur connecté est bien l'organisateur de la sortie
+        $user = $this->getUser();
+        if (!$this->sortieService->ensureIsAuthor($sortie, $user)) {
+            throw $this->createAccessDeniedException('Seul l\'organisateur peut modifier cette sortie.');
+        }
+
+        // Récupérer le campus (champ disabled, non soumis)
+        $campus = $sortie->getCampus();
+
+        // Créer le formulaire pré-rempli avec les données de la sortie
+        $sortieForm = $this->createForm(SortieType::class, $sortie);
+
+        // Traiter le formulaire
+        $sortieForm->handleRequest($request);
+
+        // Si le formulaire est correctement soumis
+        if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
+            // Le champ campus est disabled, il n'est pas soumis : on le réaffecte
+            $sortie->setCampus($campus);
+
+            // Vérifier quel bouton a été cliqué
+            if ($request->request->has('sortieForm[publier]')) {
+                $sortie->setEtat(EtatSortie::Ouverte);
+                $this->addFlash('success', 'Sortie publiée avec succès !');
+            } else {
+                $this->addFlash('success', 'Sortie mise à jour avec succès !');
+            }
+
+            $entityManager->persist($sortie);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('main_home');
+        }
+
+        return $this->render('sorties/edit.html.twig', [
+            'sortie' => $sortie,
+            'sortieForm' => $sortieForm,
+            'lieuxData' => $this->sortieService->getLieuxData(),
+        ]);
+    }
+
+    #[Route('/{id}/supprimer/', name: 'sortie_delete', requirements: ['id' => '\d+'], methods: ['GET'])]
+    public function delete(Sortie $sortie, EntityManagerInterface $entityManager, Request $request): Response
+    {
+        // Vérifier que l'utilisateur connecté est bien l'organisateur de la sortie
+        $user = $this->getUser();
+        if (!$this->sortieService->ensureIsAuthor($sortie, $user)) {
+            throw $this->createAccessDeniedException('Seul l\'organisateur peut supprimer cette sortie.');
+        }
+
+        // Voir le twig de la page edit pour la création du token, ici vérification de sa validité
+        $tokenIsValid = $this->isCsrfTokenValid('delete-token-' . $sortie->getId(), $request->query->get('token'));
+
+        if ($tokenIsValid) {
+
+            $entityManager->remove($sortie);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Sortie supprimée avec succès');
+
+            return $this->redirectToRoute('main_home');
+        }
+        $this->addFlash('error', 'Cette sortie ne peut être supprimée');
+        return $this->redirectToRoute('main_home');
+    }
+
     // TODO publier
     // TODO annuler
     // TODO Se desister
