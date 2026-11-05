@@ -12,6 +12,7 @@
             <span class="text-red-500 text-xs mb-0.5">*</span>
             {{ form_label(sortieForm.nom, null, {'label_attr': {'class': 'block mb-2.5 text-sm font-medium text-heading'}}) }}
             {{ form_widget(sortieForm.nom) }}
+            {{ form_errors(sortieForm.nom) }}
         </div>
 
         {# Campus (lecture seule) #}
@@ -99,16 +100,10 @@
 
         {# Boutons #}
         <div class="flex justify-center gap-4 mt-6">
-            <button type="submit" name="sortieForm[enregistrer]"
-                    class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-500 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none">
-                Enregistrer
-            </button>
-            <button type="submit" name="sortieForm[publier]"
-                    class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-500 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none">
-                Publier
-            </button>
+            {{ form_widget(sortieForm.enregistrer) }}
+            {{ form_widget(sortieForm.publier) }}
             <a href="{{ path('liste') }}"
-               class="text-white bg-gray-600 hover:bg-gray-700 focus:ring-4 focus:ring-gray-500 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none inline-block">
+               class="cursor-pointer text-white bg-gray-600 hover:bg-gray-700 focus:ring-4 focus:ring-gray-500 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none inline-block">
                 Retour à la liste
             </a>
         </div>

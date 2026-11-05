@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 @source "../../vendor/symfony/twig-bridge/Resources/views/Form";
+@source "../../src/Form";
 
 @theme {
     --color-github-darkest: #010409;
