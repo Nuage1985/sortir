@@ -44,7 +44,7 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
         $sortie1 = new Sortie();
         $sortie1->setNom('Balade à Rennes')
             ->setDateHeureDebut(new \DateTime('2026-11-18 18:30:00'))
-            ->setDuree(new \DateTime('02:00:00'))
+            ->setDuree(120)
             ->setDateLimiteInscription(new \DateTime('2026-11-15 23:59:00'))
             ->setNbInscriptionMax(12)
             ->setInfosSortie('Découverte du centre historique et du parc.')
@@ -70,7 +70,7 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
         $sortie2 = new Sortie();
         $sortie2->setNom('Sortie kayak')
             ->setDateHeureDebut(new \DateTime('2026-11-20 09:00:00'))
-            ->setDuree(new \DateTime('03:00:00'))
+            ->setDuree(180)
             ->setDateLimiteInscription(new \DateTime('2026-11-17 18:00:00'))
             ->setNbInscriptionMax(8)
             ->setInfosSortie('Session découverte en rivière avec matériel fourni.')
@@ -84,7 +84,7 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
         $sortie3 = new Sortie();
         $sortie3->setNom('Brouillon de Marie')
             ->setDateHeureDebut(new \DateTime('2026-12-05 14:00:00'))
-            ->setDuree(new \DateTime('01:30:00'))
+            ->setDuree(90)
             ->setDateLimiteInscription(new \DateTime('2026-12-01 23:59:00'))
             ->setNbInscriptionMax(10)
             ->setInfosSortie('Sortie en cours de création.')
@@ -98,7 +98,7 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
         $sortie4 = new Sortie();
         $sortie4->setNom('Brouillon de Paul')
             ->setDateHeureDebut(new \DateTime('2026-12-10 10:00:00'))
-            ->setDuree(new \DateTime('02:00:00'))
+            ->setDuree(120)
             ->setDateLimiteInscription(new \DateTime('2026-12-07 23:59:00'))
             ->setNbInscriptionMax(6)
             ->setInfosSortie('Brouillon non publié.')
@@ -112,7 +112,7 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
         $sortie5 = new Sortie();
         $sortie5->setNom('Randonnée côtière')
             ->setDateHeureDebut(new \DateTime('2026-11-25 10:00:00'))
-            ->setDuree(new \DateTime('04:00:00'))
+            ->setDuree(240)
             ->setDateLimiteInscription(new \DateTime('2026-11-22 23:59:00'))
             ->setNbInscriptionMax(15)
             ->setInfosSortie('Sortie sur le littoral.')

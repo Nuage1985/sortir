@@ -8,7 +8,10 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Enum\EtatSortie;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
+#[UniqueEntity(fields: 'nom', message: 'Cette sortie existe déjà !')]
 #[ORM\Entity(repositoryClass: SortieRepository::class)]
 class Sortie
 {
@@ -17,21 +20,33 @@ class Sortie
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Le titre est obligatoire.')]
+    #[Assert\Length(min: 1, max: 180)]
+    #[ORM\Column(length: 180)]
     private ?string $nom = null;
 
+    #[Assert\NotBlank(message: 'La date et l\'heure de début sont obligatoires.')]
+    #[Assert\GreaterThan('now', message: 'La sortie doit se dérouler dans le futur !')]
     #[ORM\Column]
     private ?\DateTime $dateHeureDebut = null;
 
-    #[ORM\Column(type: Types::TIME_MUTABLE)]
-    private ?\DateTime $duree = null;
+    #[Assert\NotBlank(message: 'La durée est obligatoire.')]
+    #[Assert\Positive(message: 'La durée doit être supérieure à 0.')]
+    #[ORM\Column]
+    private ?int $duree = null;
 
+    #[Assert\NotBlank(message: 'La date limite est requise.')]
+    #[Assert\LessThan(propertyPath: 'dateHeureDebut', message: 'La date limite doit être antérieure à la date de la sortie')]
     #[ORM\Column(nullable: true)]
     private ?\DateTime $dateLimiteInscription = null;
 
+    #[Assert\NotBlank(message: 'Le nombre de places est obligatoire.')]
+    #[Assert\Positive(message: 'Le nombre de places doit être supérieur à 0.')]
     #[ORM\Column]
     private ?int $nbInscriptionMax = null;
 
+    #[Assert\NotBlank(message: 'Une description est requise.')]
+    #[Assert\Length(min: 20, max: 255, minMessage: '20 caractères minimum', maxMessage: 'Limite de caractères dépassées, 255 maximum.')]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $infosSortie = null;
 
@@ -39,6 +54,7 @@ class Sortie
     #[ORM\Column(length: 20, enumType: EtatSortie::class)]
     private EtatSortie $etat = EtatSortie::EnCreation;
 
+    #[Assert\NotBlank(message: 'Le lieu est obligatoire')]
     #[ORM\ManyToOne(inversedBy: 'sorties')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Lieu $lieu = null;
@@ -102,12 +118,12 @@ class Sortie
         return $this;
     }
 
-    public function getDuree(): ?\DateTime
+    public function getDuree(): ?int
     {
         return $this->duree;
     }
 
-    public function setDuree(\DateTime $duree): static
+    public function setDuree(?int $duree): static
     {
         $this->duree = $duree;
 
