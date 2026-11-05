@@ -38,7 +38,8 @@
     {% endif %}
 
     {% if is_granted('ROLE_USER') %}
-        <div class="bg-github-dark-gray text-default m-4 p-4 w-fit ml-auto rounded-lg border-3 border-github-dark-blue flex items-center justify-between gap-4">
+        <div
+            class="bg-github-dark-gray text-default m-4 p-4 w-fit ml-auto rounded-lg border-3 border-github-dark-blue flex items-center justify-between gap-4">
             <div>
                 <p class="mb-1">Date du jour : {{ "now"|date("d/m/Y") }}</p>
                 <p>Profil : {{ app.user.prenom }} {{ app.user.nom | first }}.</p>
@@ -53,12 +54,14 @@
                      alt="Silhouette de profil utilisateur, par défaut">
             {% endif %}
         </div>
-        <form method="get" action="{{ path('liste') }}" class="mb-6 flex flex-wrap items-center gap-3 rounded-lg border border-gray-600 bg-github-dark-gray p-4 text-heading">
-            <select name="campusId" id="campusId" class="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-heading focus:outline-none">
+        <form method="get" action="{{ path('liste') }}"
+              class="mb-6 flex flex-wrap items-center gap-3 rounded-lg border border-gray-600 bg-github-dark-gray p-4 text-heading">
+            <select name="campusId" id="campusId"
+                    class="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-heading focus:outline-none">
                 {% for campus in campusList|default([]) %}
                     <option value="{{ campus.id }}"
                         {% if campusSelectionne is defined and campus.id == campusSelectionne.id %}
-                            selected
+                    selected
                         {% endif %}>
                         {{ campus.nom }}
                     </option>
@@ -66,22 +69,36 @@
             </select>
 
             <label for="nom" class="text-sm">Le nom de la sortie contient</label>
-            <input type="search" name="nom" id="nom" placeholder="search" value="{{ filtres.nom|default('') }}" class="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-heading placeholder:text-gray-400 focus:outline-none">
+            <input type="search" name="nom" id="nom" placeholder="search" value="{{ filtres.nom|default('') }}"
+                   class="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-heading placeholder:text-gray-400 focus:outline-none">
 
             <label for="dateDebut" class="text-sm">Entre</label>
-            <input type="date" name="dateDebut" id="dateDebut" value="{{ filtres.dateDebut|default('') }}" class="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-heading focus:outline-none">
+            <input type="date" name="dateDebut" id="dateDebut" value="{{ filtres.dateDebut|default('') }}"
+                   class="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-heading focus:outline-none">
             <label for="dateFin" class="text-sm">et</label>
-            <input type="date" name="dateFin" id="dateFin" value="{{ filtres.dateFin|default('') }}" class="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-heading focus:outline-none">
+            <input type="date" name="dateFin" id="dateFin" value="{{ filtres.dateFin|default('') }}"
+                   class="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-heading focus:outline-none">
 
-            <label class="text-sm"><input type="checkbox" name="organisateur" value="1" class="h-4 w-4 rounded text-blue-600 bg-gray-700 border-gray-500" {{ filtres.organisateur|default(false) ? 'checked' }}> Sorties dont je suis l'organisateur/trice</label>
-            <label class="text-sm"><input type="checkbox" name="inscrit" id="inscrit" value="1" class="h-4 w-4 rounded text-blue-600 bg-gray-700 border-gray-500" {{ filtres.inscrit|default(false) ? 'checked' }}> Sorties auxquelles je suis inscrit/e</label>
-            <label class="text-sm"><input type="checkbox" name="nonInscrit" id="nonInscrit" value="1" class="h-4 w-4 rounded text-blue-600 bg-gray-700 border-gray-500" {{ filtres.nonInscrit|default(false) ? 'checked' }}> Sorties auxquelles je ne suis pas inscrit/e</label>
-            <label class="text-sm"><input type="checkbox" name="terminees" value="1" class="h-4 w-4 rounded text-blue-600 bg-gray-700 border-gray-500" {{ filtres.terminees|default(false) ? 'checked' }}> Sorties terminées</label>
+            <label class="text-sm"><input type="checkbox" name="organisateur" value="1"
+                                          class="h-4 w-4 rounded text-blue-600 bg-gray-700 border-gray-500" {{ filtres.organisateur|default(false) ? 'checked' }}>
+                Sorties dont je suis l'organisateur/trice</label>
+            <label class="text-sm"><input type="checkbox" name="inscrit" id="inscrit" value="1"
+                                          class="h-4 w-4 rounded text-blue-600 bg-gray-700 border-gray-500" {{ filtres.inscrit|default(false) ? 'checked' }}>
+                Sorties auxquelles je suis inscrit/e</label>
+            <label class="text-sm"><input type="checkbox" name="nonInscrit" id="nonInscrit" value="1"
+                                          class="h-4 w-4 rounded text-blue-600 bg-gray-700 border-gray-500" {{ filtres.nonInscrit|default(false) ? 'checked' }}>
+                Sorties auxquelles je ne suis pas inscrit/e</label>
+            <label class="text-sm"><input type="checkbox" name="terminees" value="1"
+                                          class="h-4 w-4 rounded text-blue-600 bg-gray-700 border-gray-500" {{ filtres.terminees|default(false) ? 'checked' }}>
+                Sorties terminées</label>
 
-            <button type="submit" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">Rechercher</button>
+            <button type="submit"
+                    class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">Rechercher
+            </button>
         </form>
 
-        <div class="relative overflow-x-auto bg-github-dark-gray text-heading shadow-sm rounded-lg border border-gray-600">
+        <div
+            class="relative overflow-x-auto bg-github-dark-gray text-heading shadow-sm rounded-lg border border-gray-600">
             <table class="w-full text-sm text-left text-heading">
                 <thead class="bg-gray-700 border-b border-gray-600">
                 <tr>
@@ -112,7 +129,8 @@
                         <td class="px-6 py-4">{{ sortie.etat.libelle }}</td>
                         <td class="px-6 py-4">{{ estInscrit ? 'X' : '' }}</td>
                         <td class="px-6 py-4">
-                            <a href="#" class="font-medium text-blue-500 hover:underline">{{ sortie.organisateur.prenom }} {{ sortie.organisateur.nom }}</a>
+                            <a href="#"
+                               class="font-medium text-blue-500 hover:underline">{{ sortie.organisateur.prenom }} {{ sortie.organisateur.nom }}</a>
                         </td>
                         <td class="px-6 py-4">
                             <a href="{{ path('sortie_detail', { id: sortie.id }) }}" class="font-medium text-blue-500 hover:underline">Afficher</a>
@@ -139,7 +157,12 @@
                 </tbody>
             </table>
         </div>
-
+        <button
+            class=" my-8 text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-500 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none">
+            <a href="{{ path('sorties_creer') }}">
+                Créer une sortie
+            </a>
+        </button>
         <script>
             (() => {
                 const inscrit = document.getElementById('inscrit');
