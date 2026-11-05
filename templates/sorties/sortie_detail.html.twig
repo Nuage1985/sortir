@@ -5,7 +5,6 @@
 {% block body %}
     <div class="max-w-4xl mx-auto bg-github-dark-gray border border-github-dark-blue rounded-lg p-6 shadow-lg">
 
-        {# Titre de la page conforme à la maquette ("Afficher une sortie") #}
         <div class="flex items-center justify-between mb-6">
             <h1 class="text-3xl font-bold text-heading">Afficher une sortie</h1>
             <a href="{{ path('liste') }}"
@@ -16,7 +15,6 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-body">
 
-            {# Colonne gauche : informations sur la sortie #}
             <div class="space-y-4">
                 <div>
                     <p class="text-sm text-gray-400">Nom de la sortie</p>
@@ -40,7 +38,6 @@
                     <p class="text-lg">{{ sortie.participants|length }} / {{ sortie.nbInscriptionMax }}</p>
                 </div>
 
-                {# Durée en minutes (propriété "duree" supposée sur l'entité Sortie) #}
                 <div>
                     <p class="text-sm text-gray-400">Durée (en minutes)</p>
                     <p class="text-lg">
@@ -49,14 +46,12 @@
                 </div>
             </div>
 
-            {# Colonne droite : campus et localisation #}
             <div class="space-y-4">
                 <div>
                     <p class="text-sm text-gray-400">Campus</p>
                     <p class="text-lg">{{ sortie.campus.nom }}</p>
                 </div>
 
-                {# Ville, lieu, rue, code postal et coordonnées : relations supposées Sortie -> Lieu -> Ville #}
                 <div>
                     <p class="text-sm text-gray-400">Ville</p>
                     <p class="text-lg">{{ sortie.lieu.ville.nom }}</p>
@@ -80,14 +75,12 @@
                 <div>
                     <p class="text-sm text-gray-400">Latitude / Longitude</p>
                     <p class="text-lg">
-                        {# Les coordonnées sont facultatives : on affiche un tiret si absentes #}
                         {{ sortie.lieu.latitude ?? '-' }} / {{ sortie.lieu.longitude ?? '-' }}
                     </p>
                 </div>
             </div>
         </div>
 
-        {# Description et infos #}
         <div class="mt-8 border-t border-gray-700 pt-6">
             <p class="text-sm text-gray-400 mb-2">Description et infos</p>
             <p class="text-body leading-relaxed">
@@ -95,7 +88,6 @@
             </p>
         </div>
 
-        {# Liste des participants inscrits (tableau Pseudo / Nom de la maquette) #}
         <div class="mt-8">
             <h2 class="text-lg font-semibold text-heading mb-3">Liste des participants inscrits</h2>
             <table class="w-full max-w-md text-left border border-gray-700 text-body">
@@ -109,13 +101,11 @@
                 {% for participant in sortie.participants %}
                     <tr class="border-t border-gray-700">
                         <td class="px-3 py-2">
-                            {# Le pseudo est un lien vers le profil : adapter le nom de la route #}
                             <a href="{{ path('profile_details', {id: participant.id}) }}"
                                class="text-blue-400 hover:underline">
                                 {{ participant.pseudo }}
                             </a>
                         </td>
-                        {# Format de la maquette : Prénom NOM #}
                         <td class="px-3 py-2">{{ participant.prenom }} {{ participant.nom|upper }}</td>
                     </tr>
                 {% else %}
@@ -127,7 +117,6 @@
             </table>
         </div>
 
-        {# Boutons conservés tels quels (absents de la maquette) #}
         <div class="mt-8 flex gap-3">
             <button class="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white">
                 S'inscrire
