@@ -3,17 +3,20 @@
 namespace App\Service;
 
 use App\Entity\Campus;
+use App\Entity\Lieu;
 use App\Entity\Participant;
 use App\Entity\Sortie;
 use App\Enum\EtatSortie;
+use App\Repository\LieuRepository;
 use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
-class SortieServiceImpl implements SortieService
+readonly class SortieServiceImpl implements SortieService
 {
 
     public function __construct(
-        private SortieRepository $sortieRepository
+        private SortieRepository $sortieRepository,
+        private LieuRepository    $lieuRepository
     ) {
     }
 
@@ -30,7 +33,7 @@ class SortieServiceImpl implements SortieService
         }
 
         if ($campus === null) {
-            return []; //La requête attend un objet Campus non null, donc on lui retourne une valeur vide pour eviter l'erreur
+            return []; //La requête attend un objet Campus non null, donc on lui retourne une valeur vide pour éviter l'erreur
         }
 
         return $this->sortieRepository->findFilteredSorties($campus, $participant, $filtres);
@@ -45,6 +48,26 @@ class SortieServiceImpl implements SortieService
             && $sortie->getOrganisateur()->getId() === $participant->getId();
     }
 
+    public function ensureIsAuthor(Sortie $sortie, Participant $participant): bool
+    {
+        return $sortie->getOrganisateur()?->getId() === $participant->getId();
+    }
+
+    public function getLieuxData(): array
+    {
+        $lieux = $this->lieuRepository->findAll();
+        $lieuxData = [];
+        foreach ($lieux as $lieu) {
+            $lieuxData[$lieu->getId()] = [
+                'rue' => $lieu->getRue(),
+                'ville' => $lieu->getVille() ? $lieu->getVille()->getNom() : '',
+                'codePostal' => $lieu->getVille() ? $lieu->getVille()->getCodePostal() : '',
+                'latitude' => $lieu->getLatitude(),
+                'longitude' => $lieu->getLongitude(),
+            ];
+        }
+        return $lieuxData;
+    }
 
     public function getSortieDetails(int $id): ?Sortie
     {

@@ -1,0 +1,131 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1 class="text-center text-3xl text-heading font-semibold whitespace-nowrap mb-8">Modifier une sortie</h1>
+
+    <div class="max-w-4xl mx-auto bg-github-dark-gray p-6 rounded-lg border-3 border-github-dark-blue">
+
+        {{ form_start(sortieForm) }}
+
+        {# Titre de la sortie (lecture seule) #}
+        <div class="mb-5">
+            <span class="text-red-500 text-xs mb-0.5">*</span>
+            {{ form_label(sortieForm.nom, null, {'label_attr': {'class': 'block mb-2.5 text-sm font-medium text-heading'}}) }}
+            {{ form_widget(sortieForm.nom) }}
+        </div>
+
+        {# Campus (lecture seule) #}
+        <div class="mb-5">
+            {{ form_label(sortieForm.campus, null, {'label_attr': {'class': 'block mb-2.5 text-sm font-medium text-heading'}}) }}
+            <p class="text-xs text-gray-400 mt-1">Vous ne pouvez pas modifier votre campus</p>
+            {{ form_widget(sortieForm.campus) }}
+        </div>
+
+        {# Grille 2 colonnes sur desktop, 1 colonne sur mobile #}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+            <div>
+                <span class="text-red-500 text-xs mb-0.5">*</span>
+                {{ form_label(sortieForm.dateHeureDebut) }}
+                {{ form_widget(sortieForm.dateHeureDebut) }}
+                {{ form_errors(sortieForm.dateHeureDebut) }}
+            </div>
+
+            <div>
+                <span class="text-red-500 text-xs mb-0.5">*</span>
+                {{ form_label(sortieForm.duree) }}
+                {{ form_widget(sortieForm.duree) }}
+                {{ form_errors(sortieForm.duree) }}
+            </div>
+
+            <div>
+                <span class="text-red-500 text-xs mb-0.5">*</span>
+                {{ form_label(sortieForm.dateLimiteInscription) }}
+                {{ form_widget(sortieForm.dateLimiteInscription) }}
+                {{ form_errors(sortieForm.dateLimiteInscription) }}
+            </div>
+
+            <div>
+                <span class="text-red-500 text-xs mb-0.5">*</span>
+                {{ form_label(sortieForm.nbInscriptionMax) }}
+                {{ form_widget(sortieForm.nbInscriptionMax) }}
+                {{ form_errors(sortieForm.nbInscriptionMax) }}
+            </div>
+
+        </div>
+
+        {# Sélection du lieu + détails affichés dynamiquement #}
+        <div data-controller="lieu-details"
+             data-lieu-details-lieux-value='{{ lieuxData|json_encode|e('html_attr') }}'>
+            <div class="md:col-span-2">
+                <span class="text-red-500 text-xs mb-0.5">*</span>
+                {{ form_label(sortieForm.lieu) }}
+                {{ form_widget(sortieForm.lieu, {'attr': {'data-lieu-details-target': 'select'}}) }}
+                {{ form_errors(sortieForm.lieu) }}
+            </div>
+
+            <div data-lieu-details-target="details" class="mt-5 hidden">
+                <div class="bg-gray-700 border border-gray-600 text-gray-300 text-sm rounded-lg p-4">
+                    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <dt class="font-medium text-gray-400">Adresse</dt>
+                            <dd data-lieu-details-target="rue">-</dd>
+                        </div>
+                        <div>
+                            <dt class="font-medium text-gray-400">Ville</dt>
+                            <dd data-lieu-details-target="ville">-</dd>
+                        </div>
+                        <div>
+                            <dt class="font-medium text-gray-400">Code postal</dt>
+                            <dd data-lieu-details-target="codePostal">-</dd>
+                        </div>
+                        <div>
+                            <dt class="font-medium text-gray-400">Coordonnées GPS</dt>
+                            <dd data-lieu-details-target="coordonnees">-</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        {# Description #}
+        <div class="mt-5">
+            <span class="text-red-500 text-xs mb-0.5">*</span>
+            {{ form_label(sortieForm.infosSortie) }}
+            {{ form_widget(sortieForm.infosSortie) }}
+            {{ form_errors(sortieForm.infosSortie) }}
+            <p class="text-s text-gray-400 mt-1"><span class="text-red-500 text-xs mb-0.5">(*)</span> Les champs marqués
+                d'un astérisque sont obligatoires.</p>
+        </div>
+
+        {# Boutons #}
+        <div class="flex justify-center gap-4 mt-6">
+            <button type="submit" name="sortieForm[enregistrer]"
+                    class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-500 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none">
+                Enregistrer
+            </button>
+            <button type="submit" name="sortieForm[publier]"
+                    class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-500 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none">
+                Publier
+            </button>
+            <a href="{{ path('sortie_delete', {'id': sortie.id, 'token': csrf_token('delete-token-'~sortie.id)}) }}"
+               class="text-white bg-red-500 hover:bg-red-700 focus:ring-4 focus:ring-red-500 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none inline-block"
+               title="Supprimer cette sortie">
+                Supprimer
+            </a>
+            <a href="{{ path('liste') }}"
+               class="text-white bg-gray-600 hover:bg-gray-700 focus:ring-4 focus:ring-gray-500 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none inline-block">
+                Retour à la liste
+            </a>
+        </div>
+        {{ form_end(sortieForm) }}
+    </div>
+{% endblock %}
+
+{% block title %}
+    {{ parent() }} | Modification
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

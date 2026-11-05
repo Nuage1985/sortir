@@ -52,36 +52,39 @@
                 {{ form_errors(sortieForm.nbInscriptionMax) }}
             </div>
 
+        </div>
+
+        {# Sélection du lieu + détails affichés dynamiquement #}
+        <div data-controller="lieu-details"
+             data-lieu-details-lieux-value='{{ lieuxData|json_encode|e('html_attr') }}'>
             <div class="md:col-span-2">
                 <span class="text-red-500 text-xs mb-0.5">*</span>
                 {{ form_label(sortieForm.lieu) }}
-                {{ form_widget(sortieForm.lieu) }}
+                {{ form_widget(sortieForm.lieu, {'attr': {'data-lieu-details-target': 'select'}}) }}
                 {{ form_errors(sortieForm.lieu) }}
             </div>
 
-        </div>
-
-        {# Détails du lieu, affichés quand un lieu est sélectionné #}
-        <div id="lieu-details" class="mt-5 hidden">
-            <div class="bg-gray-700 border border-gray-600 text-gray-300 text-sm rounded-lg p-4">
-                <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                        <dt class="font-medium text-gray-400">Adresse</dt>
-                        <dd id="lieu-rue">-</dd>
-                    </div>
-                    <div>
-                        <dt class="font-medium text-gray-400">Ville</dt>
-                        <dd id="lieu-ville">-</dd>
-                    </div>
-                    <div>
-                        <dt class="font-medium text-gray-400">Code postal</dt>
-                        <dd id="lieu-code-postal">-</dd>
-                    </div>
-                    <div>
-                        <dt class="font-medium text-gray-400">Coordonnées GPS</dt>
-                        <dd id="lieu-coordonnees">-</dd>
-                    </div>
-                </dl>
+            <div data-lieu-details-target="details" class="mt-5 hidden">
+                <div class="bg-gray-700 border border-gray-600 text-gray-300 text-sm rounded-lg p-4">
+                    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <dt class="font-medium text-gray-400">Adresse</dt>
+                            <dd data-lieu-details-target="rue">-</dd>
+                        </div>
+                        <div>
+                            <dt class="font-medium text-gray-400">Ville</dt>
+                            <dd data-lieu-details-target="ville">-</dd>
+                        </div>
+                        <div>
+                            <dt class="font-medium text-gray-400">Code postal</dt>
+                            <dd data-lieu-details-target="codePostal">-</dd>
+                        </div>
+                        <div>
+                            <dt class="font-medium text-gray-400">Coordonnées GPS</dt>
+                            <dd data-lieu-details-target="coordonnees">-</dd>
+                        </div>
+                    </dl>
+                </div>
             </div>
         </div>
 
@@ -119,32 +122,5 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const lieuxData = {{ lieuxData|json_encode|raw }};
-            const lieuSelect = document.querySelector('select[name$="[lieu]"]');
-            const lieuDetails = document.getElementById('lieu-details');
-
-            if (lieuSelect && lieuDetails) {
-                lieuSelect.addEventListener('change', function () {
-                    const lieuId = this.value;
-                    if (lieuId && lieuxData[lieuId]) {
-                        const data = lieuxData[lieuId];
-                        document.getElementById('lieu-rue').textContent = data.rue || '-';
-                        document.getElementById('lieu-ville').textContent = data.ville || '-';
-                        document.getElementById('lieu-code-postal').textContent = data.codePostal || '-';
-                        let coords = '';
-                        if (data.latitude && data.longitude) {
-                            coords = data.latitude + ', ' + data.longitude;
-                        }
-                        document.getElementById('lieu-coordonnees').textContent = coords || '-';
-                        lieuDetails.classList.remove('hidden');
-                    } else {
-                        lieuDetails.classList.add('hidden');
-                    }
-                });
-            }
-        });
-    </script>
 {% endblock %}
 
