@@ -1,0 +1,129 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Afficher une sortie{% endblock %}
+
+{% block body %}
+    <div class="max-w-4xl mx-auto bg-github-dark-gray border border-github-dark-blue rounded-lg p-6 shadow-lg">
+
+        <div class="flex items-center justify-between mb-6">
+            <h1 class="text-3xl font-bold text-heading">Afficher une sortie</h1>
+            <a href="{{ path('liste') }}"
+               class="inline-flex items-center px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium">
+                Retour
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-body">
+
+            <div class="space-y-4">
+                <div>
+                    <p class="text-sm text-gray-400">Nom de la sortie</p>
+                    <p class="text-lg">{{ sortie.nom }}</p>
+                </div>
+
+                <div>
+                    <p class="text-sm text-gray-400">Date et heure de la sortie</p>
+                    <p class="text-lg">{{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</p>
+                </div>
+
+                <div>
+                    <p class="text-sm text-gray-400">Date limite d'inscription</p>
+                    <p class="text-lg">
+                        {{ sortie.dateLimiteInscription ? sortie.dateLimiteInscription|date('d/m/Y') : 'Non définie' }}
+                    </p>
+                </div>
+
+                <div>
+                    <p class="text-sm text-gray-400">Nombre de places</p>
+                    <p class="text-lg">{{ sortie.participants|length }} / {{ sortie.nbInscriptionMax }}</p>
+                </div>
+
+                <div>
+                    <p class="text-sm text-gray-400">Durée (en minutes)</p>
+                    <p class="text-lg">
+                        {{ sortie.duree ? sortie.duree|date('H:i') : 'Non définie' }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <p class="text-sm text-gray-400">Campus</p>
+                    <p class="text-lg">{{ sortie.campus.nom }}</p>
+                </div>
+
+                <div>
+                    <p class="text-sm text-gray-400">Ville</p>
+                    <p class="text-lg">{{ sortie.lieu.ville.nom }}</p>
+                </div>
+
+                <div>
+                    <p class="text-sm text-gray-400">Lieu</p>
+                    <p class="text-lg">{{ sortie.lieu.nom }}</p>
+                </div>
+
+                <div>
+                    <p class="text-sm text-gray-400">Rue</p>
+                    <p class="text-lg">{{ sortie.lieu.rue }}</p>
+                </div>
+
+                <div>
+                    <p class="text-sm text-gray-400">Code postal</p>
+                    <p class="text-lg">{{ sortie.lieu.ville.codePostal }}</p>
+                </div>
+
+                <div>
+                    <p class="text-sm text-gray-400">Latitude / Longitude</p>
+                    <p class="text-lg">
+                        {{ sortie.lieu.latitude ?? '-' }} / {{ sortie.lieu.longitude ?? '-' }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 border-t border-gray-700 pt-6">
+            <p class="text-sm text-gray-400 mb-2">Description et infos</p>
+            <p class="text-body leading-relaxed">
+                {{ sortie.infosSortie ?: 'Aucune information supplémentaire.' }}
+            </p>
+        </div>
+
+        <div class="mt-8">
+            <h2 class="text-lg font-semibold text-heading mb-3">Liste des participants inscrits</h2>
+            <table class="w-full max-w-md text-left border border-gray-700 text-body">
+                <thead class="bg-gray-700">
+                <tr>
+                    <th class="px-3 py-2">Pseudo</th>
+                    <th class="px-3 py-2">Nom</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for participant in sortie.participants %}
+                    <tr class="border-t border-gray-700">
+                        <td class="px-3 py-2">
+                            <a href="{{ path('profile_details', {id: participant.id}) }}"
+                               class="text-blue-400 hover:underline">
+                                {{ participant.pseudo }}
+                            </a>
+                        </td>
+                        <td class="px-3 py-2">{{ participant.prenom }} {{ participant.nom|upper }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="2" class="px-3 py-2 text-gray-400">Aucun participant inscrit.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-8 flex gap-3">
+            <button class="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white">
+                S'inscrire
+            </button>
+            <button class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white">
+                Se désister
+            </button>
+        </div>
+    </div>
+{% endblock %}

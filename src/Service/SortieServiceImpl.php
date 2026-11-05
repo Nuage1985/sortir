@@ -9,6 +9,7 @@ use App\Entity\Sortie;
 use App\Enum\EtatSortie;
 use App\Repository\LieuRepository;
 use App\Repository\SortieRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 readonly class SortieServiceImpl implements SortieService
 {
@@ -68,4 +69,8 @@ readonly class SortieServiceImpl implements SortieService
         return $lieuxData;
     }
 
+    public function getSortieDetails(int $id): ?Sortie
+    {
+        return $this->sortieRepository->find($id);
+    }
 }
