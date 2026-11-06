@@ -49,6 +49,19 @@ class ParticipantFixtures extends Fixture implements DependentFixtureInterface
         $manager->persist($admin);
         $this->addReference('participant-paul', $admin);
 
+        // Profil suspendu, pour test (isActive === false)
+        $suspendedUser = new Participant();
+        $suspendedUser->setPseudo('Troll_lolol')
+            ->setNom('Toxic')
+            ->setPrenom('Jean-Michel')
+            ->setMail('troll@eni.fr')
+            ->setAdmin(false)
+            ->setActif(false)
+            ->setCampus($this->getReference('campus-nantes', Campus::class));
+        $suspendedUser->setPassword($this->passwordHasher->hashPassword($suspendedUser, 'password'));
+        $manager->persist($suspendedUser);
+        $this->addReference('participant-suspended', $suspendedUser);
+
         // Profils avec faker, 10 participants par campus.
         $faker = \Faker\Factory::create('fr_FR');
 
