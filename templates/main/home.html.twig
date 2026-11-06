@@ -158,14 +158,15 @@
                             {% endif %}
                             {% if sortie.etat.value == 'Ouverte' and not estInscrit and sortie.participants|length < sortie.nbInscriptionMax and (sortie.dateLimiteInscription is null or sortie.dateLimiteInscription > date()) %}
                                 <br><form method="post" action="{{ path('sortie_inscrire', { id: sortie.id }) }}">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('inscrire_sortie_' ~ sortie.id) }}">
-                                    <button type="submit" class="font-medium text-blue-500 hover:underline">
-                                        S'inscrire
-                                    </button>
-                            </form>
+                                        <input type="hidden" name="_token" value="{{ csrf_token('inscrire_sortie_' ~ sortie.id) }}">
+                                        <button type="submit" class="font-medium text-blue-500 hover:underline">S'inscrire</button>
+                                    </form>
                             {% endif %}
                             {% if estInscrit and sortie.etat.value == 'Ouverte' %}
-                                <br><a href="#" class="font-medium text-blue-500 hover:underline">Se désister</a>
+                                <br><form method="post" action="{{ path('sortie_desister', { id: sortie.id }) }}">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('desister_sortie_' ~ sortie.id) }}">
+                                        <button type="submit" class="font-medium text-blue-500 hover:underline">Se désister</button>
+                                    </form>
                             {% endif %}
                         </td>
                     </tr>

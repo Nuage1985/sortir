@@ -109,4 +109,17 @@ readonly class SortieServiceImpl implements SortieService
         $this->entityManager->flush();
         return true;
     }
+
+    public function desistParticipant(Sortie $sortie, Participant $participant): bool
+    {
+        if(!$sortie->getParticipants()->contains($participant)){
+            return false;
+        }
+        if($sortie->getEtat()!=EtatSortie::Ouverte){
+            return false;
+        }
+        $sortie->removeParticipant($participant);
+        $this->entityManager->flush();
+        return true;
+    }
 }

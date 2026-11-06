@@ -38,4 +38,6 @@ interface SortieService
 
     public function signUpSortie(Sortie $sortie, Participant $participant): bool;
 
+    public function desistParticipant(Sortie $sortie, Participant $participant): bool;
+
 }
