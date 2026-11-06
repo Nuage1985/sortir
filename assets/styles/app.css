@@ -1,14 +1,52 @@
 @import "tailwindcss";
 
+@font-face {
+    font-family: "Mona Sans";
+    src: url("../fonts/mona-sans-v4-latin-regular.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Mona Sans";
+    src: url("../fonts/mona-sans-v4-latin-500.woff2") format("woff2");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Mona Sans";
+    src: url("../fonts/mona-sans-v4-latin-700.woff2") format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
 @source "../../vendor/symfony/twig-bridge/Resources/views/Form";
 @source "../../src/Form";
 
 @theme {
     --color-github-darkest: #010409;
     --color-github-dark-gray: #161B22;
-    --color-heading: #F0F6FC;
-    --color-default: #F0F6FC;
     --color-github-dark-blue: #051D4D;
+
+    --color-heading: #F0F6FC;
+    --color-heading-hover : #A5D6FF;
+    --color-default: #F0F6FC;
+}
+
+:root {
+    --font-sans: "Mona Sans", ui-sans-serif, system-ui, sans-serif;
+}
+
+html, body {
+    font-family: var(--font-sans), sans-serif;
+}
+
+h1 {
+    font-weight: 700;
 }
 
 #profile_image {

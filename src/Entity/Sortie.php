@@ -31,7 +31,7 @@ class Sortie
     private ?\DateTime $dateHeureDebut = null;
 
     #[Assert\NotBlank(message: 'La durée est obligatoire.')]
-    #[Assert\Positive(message: 'La durée doit être supérieure à 0.')]
+    #[Assert\GreaterThanOrEqual(value: 30, message: 'La durée doit être d\'au moins {{ compared_value }} minutes.')]
     #[ORM\Column]
     private ?int $duree = null;
 
@@ -42,7 +42,7 @@ class Sortie
     private ?\DateTime $dateLimiteInscription = null;
 
     #[Assert\NotBlank(message: 'Le nombre de places est obligatoire.')]
-    #[Assert\Positive(message: 'Le nombre de places doit être supérieur à 0.')]
+    #[Assert\GreaterThanOrEqual(value: 2, message: 'Il faut au moins {{ compared_value }} participants pour une sortie.')]
     #[ORM\Column]
     private ?int $nbInscriptionMax = null;
 

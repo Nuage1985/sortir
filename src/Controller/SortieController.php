@@ -153,6 +153,7 @@ class SortieController extends AbstractController
                 $sortie->setEtat(EtatSortie::Ouverte);
                 $this->addFlash('success', 'Sortie publiée avec succès !');
             } else {
+                $sortie->setEtat(EtatSortie::EnCreation);
                 $this->addFlash('success', 'Sortie mise à jour avec succès !');
             }
 

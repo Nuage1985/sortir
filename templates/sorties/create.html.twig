@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1 class="text-center text-3xl text-heading font-semibold whitespace-nowrap mb-8">Créer une sortie</h1>
+    <h1 class="text-center text-3xl text-heading font-semibold whitespace-nowrap my-4">Créer une sortie</h1>
 
     <div class="max-w-4xl mx-auto bg-github-dark-gray p-6 rounded-lg border-3 border-github-dark-blue">
 
@@ -96,6 +96,7 @@
             {{ form_widget(sortieForm.infosSortie) }}
             {{ form_errors(sortieForm.infosSortie) }}
             <p class="text-s text-gray-400 mt-1"><span class="text-red-500 text-xs mb-0.5">(*)</span> Les champs marqués d'un astérisque sont obligatoires.</p>
+            <p class="mt-4 text-s text-center text-orange-400 mt-1">Une sortie publiée ne peut plus être modifiée</p>
         </div>
 
         {# Boutons #}
