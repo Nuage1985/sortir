@@ -229,6 +229,15 @@ class SortieController extends AbstractController
             throw $this->createAccessDeniedException('Seul l\'organisateur peut annuler cette sortie.');
         }
 
+        // Valider le jeton CSRF pour les requêtes POST
+        if ($request->isMethod('POST')) {
+            $token = $request->request->get('_token');
+            if (!$this->isCsrfTokenValid('annuler_sortie_' . $sortie->getId(), $token)) {
+                $this->addFlash('error', 'Jeton CSRF invalide.');
+                return $this->redirectToRoute('main_home');
+            }
+        }
+
         // Créer le formulaire pré-rempli avec les données de la sortie
         $annulerSortieForm = $this->createForm(AnnulerSortieType::class, $sortie);
 
@@ -253,8 +262,10 @@ class SortieController extends AbstractController
             'annulerSortieForm' => $annulerSortieForm,
         ]);
     }
+
     #[Route('/{id}/publier', name: 'publier_sortie', requirements: ['id' => '\d+'], methods: ['POST'])]
-    public function publishSortie (int $id, Request $request): Response{
+    public function publishSortie(int $id, Request $request): Response
+    {
 
         $token = $request->request->get('_token');
 
@@ -299,12 +310,12 @@ class SortieController extends AbstractController
         return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
     }
 
-    #[Route('/{id}/desister', name:'sortie_desister',  methods: ['POST'])]
+    #[Route('/{id}/desister', name: 'sortie_desister', methods: ['POST'])]
     public function desist(Sortie $sortie, Request $request): Response
     {
         $user = $this->getUser();
 
-        if(!$user){
+        if (!$user) {
             throw $this->createAccessDeniedException();
         }
         $token = $request->request->get('_token');
@@ -314,7 +325,7 @@ class SortieController extends AbstractController
             return $this->redirectToRoute('main_home');
         }
 
-        if(!$this->sortieService->desistParticipant($sortie, $user)){
+        if (!$this->sortieService->desistParticipant($sortie, $user)) {
             $this->addFlash('error', 'Impossible de se désister, contactez un administrateur.');
             return $this->redirectToRoute('main_home');
         }
