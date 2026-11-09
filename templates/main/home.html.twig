@@ -42,6 +42,18 @@
     {% endif %}
 
     {# Si l'utilisateur est connecté #}
+    {% for message in app.flashes('success') %}
+        <div class="mb-4 rounded bg-green-100 px-4 py-2 text-green-700">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    {% for message in app.flashes('error') %}
+        <div class="mb-4 rounded bg-red-100 px-4 py-2 text-red-700">
+            {{ message }}
+        </div>
+    {% endfor %}
+
     {% if is_granted('ROLE_USER') %}
 
         {# Affichage des infos utilisateur + date et espace pour les flash messages #}
@@ -166,8 +178,10 @@
                         <td class="px-6 py-4">{{ sortie.etat.libelle }}</td>
                         <td class="px-6 py-4">{{ estInscrit ? 'X' : '' }}</td>
                         <td class="px-6 py-4">
-                            <a href="#"
-                               class="font-medium text-blue-500 hover:underline">{{ sortie.organisateur.prenom }} {{ sortie.organisateur.nom }}</a>
+                            <a href="{{ path('profile_details', { id: sortie.organisateur.id }) }}"
+                               class="font-medium text-blue-500 hover:underline">
+                                {{ sortie.organisateur.prenom }} {{ sortie.organisateur.nom }}
+                            </a>
                         </td>
                         <td class="px-6 py-4">
                             <a href="{{ path('sortie_detail', { id: sortie.id }) }}"
@@ -176,11 +190,22 @@
                                 <br><a href="{{ path('sortie_edit', {id: sortie.id}) }}"
                                        class="font-medium text-blue-500 hover:underline">Modifier</a>
                                 <br><a
-                                href="{{ path('sortie_publier', {id: sortie.id, token: csrf_token('publish-token-'~sortie.id)}) }}"
+                                href="{{ path('publier_sortie', {id: sortie.id, token: csrf_token('publish-token-'~sortie.id)}) }}"
                                 class="font-medium text-blue-500 hover:underline">Publier</a>
+                                <br><a href="#" class="font-medium text-blue-500 hover:underline">Modifier</a>
+                                <br><form method="post" action="{{ path('publier_sortie', { id: sortie.id }) }}">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('publish_sortie_' ~ sortie.id) }}">
+                                        <button type="submit" class="font-medium text-blue-500 hover:underline">Publier</button>
+                                    </form>
+                            {% endif %}
+                            {% if estOrganisateur and sortie.etat.value == 'Ouverte' %}
+                                <br><a href="#" class="font-medium text-blue-500 hover:underline">Annuler</a>
                             {% endif %}
                             {% if sortie.etat.value == 'Ouverte' and not estInscrit and sortie.participants|length < sortie.nbInscriptionMax and (sortie.dateLimiteInscription is null or sortie.dateLimiteInscription > date()) %}
-                                <br><a href="#" class="font-medium text-blue-500 hover:underline">S'inscrire</a>
+                                <br><form method="post" action="{{ path('sortie_inscrire', { id: sortie.id }) }}">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('inscrire_sortie_' ~ sortie.id) }}">
+                                        <button type="submit" class="font-medium text-blue-500 hover:underline">S'inscrire</button>
+                                    </form>
                             {% endif %}
                             {% if estInscrit and sortie.etat.value == 'Ouverte' %}
                                 <br><a href="#" class="font-medium text-blue-500 hover:underline">Se désister</a>
@@ -188,6 +213,10 @@
                             {% if estOrganisateur and sortie.etat.value == 'Ouverte' %}
                                 <br><a href="{{ path('sortie_annuler', { id: sortie.id}) }}"
                                        class="font-medium text-orange-500 hover:underline">Annuler</a>
+                                <br><form method="post" action="{{ path('sortie_desister', { id: sortie.id }) }}">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('desister_sortie_' ~ sortie.id) }}">
+                                        <button type="submit" class="font-medium text-blue-500 hover:underline">Se désister</button>
+                                    </form>
                             {% endif %}
                         </td>
                     </tr>

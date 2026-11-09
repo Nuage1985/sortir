@@ -65,7 +65,7 @@ class SortieController extends AbstractController
     }
 
     #[Route('/detail/{id}', name: 'sortie_detail', methods: ['GET'])]
-    public function displaySortieDetail(int $id, SortieService $sortieService, Request $request): Response
+    public function displaySortieDetail(int $id): Response
     {
         $sortie = $this->sortieService->getSortieDetails($id);
 
@@ -253,5 +253,75 @@ class SortieController extends AbstractController
             'annulerSortieForm' => $annulerSortieForm,
         ]);
     }
-    // TODO Se desister
+    #[Route('/{id}/publier', name: 'publier_sortie', requirements: ['id' => '\d+'], methods: ['POST'])]
+    public function publishSortie (int $id, Request $request): Response{
+
+        $token = $request->request->get('_token');
+
+        if (!$this->isCsrfTokenValid('publish_sortie_' . $id, $token)) {
+            $this->addFlash('error', 'Impossible de publier cette sortie.');
+            throw $this->createAccessDeniedException();
+        }
+
+        $sortie = $this->sortieService->publishSortie($id);
+
+        if (!$sortie) {
+            $this->addFlash('error', 'Impossible de publier cette sortie.');
+            throw $this->createNotFoundException('Sortie introuvable.');
+        }
+
+        $this->addFlash('success', 'Sortie publiée.');
+        return $this->redirectToRoute('main_home');
+    }
+
+    #[Route('/{id}/inscrire', name: 'sortie_inscrire', methods: ['POST'])]
+    public function singUp(Sortie $sortie, Request $request): Response
+    {
+        $user = $this->getUser();
+
+        if (!$user) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $token = $request->request->get('_token');
+
+        if (!$this->isCsrfTokenValid('inscrire_sortie_' . $sortie->getId(), $token)) {
+            $this->addFlash('error', 'Jeton CSRF invalide.');
+            return $this->redirectToRoute('main_home');
+        }
+
+        if (!$this->sortieService->signUpSortie($sortie, $user)) {
+            $this->addFlash('error', 'Impossible de s’inscrire à cette sortie.');
+            return $this->redirectToRoute('main_home');
+        }
+
+        $this->addFlash('success', 'Inscription réussie.');
+        return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
+    }
+
+    #[Route('/{id}/desister', name:'sortie_desister',  methods: ['POST'])]
+    public function desist(Sortie $sortie, Request $request): Response
+    {
+        $user = $this->getUser();
+
+        if(!$user){
+            throw $this->createAccessDeniedException();
+        }
+        $token = $request->request->get('_token');
+
+        if (!$this->isCsrfTokenValid('desister_sortie_' . $sortie->getId(), $token)) {
+            $this->addFlash('error', 'Jeton CSRF invalide.');
+            return $this->redirectToRoute('main_home');
+        }
+
+        if(!$this->sortieService->desistParticipant($sortie, $user)){
+            $this->addFlash('error', 'Impossible de se désister, contactez un administrateur.');
+            return $this->redirectToRoute('main_home');
+        }
+
+        $this->addFlash('success', 'Désistement enregistré. ');
+        return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
+    }
+
+
 }
