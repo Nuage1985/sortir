@@ -117,13 +117,26 @@
             </table>
         </div>
 
+        {% set estInscrit = sortie.participants.contains(app.user) %}
+
         <div class="mt-8 flex gap-3">
-            <button class="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white">
-                S'inscrire
-            </button>
-            <button class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white">
-                Se désister
-            </button>
+            {% if sortie.etat.value == 'Ouverte' and not estInscrit and sortie.participants|length < sortie.nbInscriptionMax and (sortie.dateLimiteInscription is null or sortie.dateLimiteInscription > date()) %}
+                <form method="post" action="{{ path('sortie_inscrire', { id: sortie.id }) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('inscrire_sortie_' ~ sortie.id) }}">
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white">
+                        S'inscrire
+                    </button>
+                </form>
+            {% endif %}
+
+            {% if estInscrit and sortie.etat.value == 'Ouverte' %}
+                <form method="post" action="{{ path('sortie_desister', { id: sortie.id }) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('desister_sortie_' ~ sortie.id) }}">
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white">
+                        Se désister
+                    </button>
+                </form>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
