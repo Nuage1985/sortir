@@ -162,7 +162,7 @@
                                 <br><form method="post" action="{{ path('sortie_inscrire', { id: sortie.id }) }}">
                                         <input type="hidden" name="_token" value="{{ csrf_token('inscrire_sortie_' ~ sortie.id) }}">
                                         <button type="submit" class="font-medium text-blue-500 hover:underline">S'inscrire</button>
-                                    </form>
+                                    </form>  <!--COmmentaire test-->
                             {% endif %}
                             {% if estInscrit and sortie.etat.value == 'Ouverte' %}
                                 <br><form method="post" action="{{ path('sortie_desister', { id: sortie.id }) }}">
