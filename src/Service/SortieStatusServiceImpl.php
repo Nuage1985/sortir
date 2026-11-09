@@ -33,11 +33,20 @@ class SortieStatusServiceImpl implements SortieStatusService
         ]);
 
         foreach ($sorties as $sortie) {
-            $dateFin = clone $sortie->getDateHeureDebut();
+
+            $dateDebut = $sortie->getDateHeureDebut();
+            $dateFin = clone $dateDebut;
             $dateFin->add(new \DateInterval('PT' . $sortie->getDuree() . 'M'));
 
-            if ($now >= $dateFin) {
+            $dateHistorisee = clone $dateFin;
+            $dateHistorisee->add(new \DateInterval('P30D'));
+
+            if ($now >= $dateHistorisee) {
+                $sortie->setEtat(EtatSortie::Historisee);
+            } elseif ($now >= $dateFin) {
                 $sortie->setEtat(EtatSortie::Terminee);
+            } elseif ($now > $dateDebut) {
+                $sortie->setEtat(EtatSortie::EnCours);
             }
         }
 
