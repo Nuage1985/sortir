@@ -7,6 +7,7 @@ use App\Entity\Lieu;
 use App\Entity\Participant;
 use App\Entity\Sortie;
 use App\Enum\EtatSortie;
+use App\Models\FiltreSortieDTO;
 use App\Repository\LieuRepository;
 use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -26,7 +27,7 @@ readonly class SortieServiceImpl implements SortieService
         return $participant->getCampus();
     }
 
-    public function getSortiesFiltered(Participant $participant, ?Campus $campus = null, array $filtres = []): array
+    public function getSortiesFiltered(Participant $participant, FiltreSortieDTO $filtres, ?Campus $campus = null): array
     {
         //Rappel : === est un opérateur strict, meme valeur, même type
         if ($campus === null) {
@@ -37,7 +38,7 @@ readonly class SortieServiceImpl implements SortieService
             return []; //La requête attend un objet Campus non null, donc on lui retourne une valeur vide pour éviter l'erreur
         }
 
-        return $this->sortieRepository->findFilteredSorties($campus, $participant, $filtres);
+        return $this->sortieRepository->findFilteredSortiesByParticipant($campus, $participant, $filtres);
     }
     public function isVisibleForParticipant(Sortie $sortie, Participant $participant): bool
     {
@@ -83,7 +84,7 @@ readonly class SortieServiceImpl implements SortieService
             return null;
         }
 
-        // On vérifie l'état de la Sortie, seul une sorite en cré"ation peut être ouverte
+        // On vérifie l'état de la Sortie, seul une sorite en création peut être ouverte
         if ($sortie->getEtat() === EtatSortie::EnCreation) {
             $sortie->setEtat(EtatSortie::Ouverte);
             $this->entityManager->flush(); //On envoie les Upsert/Delete dans la base
