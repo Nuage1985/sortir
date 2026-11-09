@@ -21,7 +21,7 @@ class Sortie
     private ?int $id = null;
 
     #[Assert\NotBlank(message: 'Le titre est obligatoire.')]
-    #[Assert\Length(min: 1, max: 180)]
+    #[Assert\Length(min: 5, max: 180, minMessage: '5 caractères minimum', maxMessage: '180 caractères maximum')]
     #[ORM\Column(length: 180)]
     private ?string $nom = null;
 
@@ -31,17 +31,18 @@ class Sortie
     private ?\DateTime $dateHeureDebut = null;
 
     #[Assert\NotBlank(message: 'La durée est obligatoire.')]
-    #[Assert\Positive(message: 'La durée doit être supérieure à 0.')]
+    #[Assert\GreaterThanOrEqual(value: 30, message: 'La durée doit être d\'au moins {{ compared_value }} minutes.')]
     #[ORM\Column]
     private ?int $duree = null;
 
-    #[Assert\NotBlank(message: 'La date limite est requise.')]
+    #[Assert\NotBlank(message: 'La date limite pour l\'inscription est requise.')]
     #[Assert\LessThan(propertyPath: 'dateHeureDebut', message: 'La date limite doit être antérieure à la date de la sortie')]
+    #[Assert\GreaterThan(value: 'now', message: 'La date limite pour l\'inscription ne peut pas être une date passée.')]
     #[ORM\Column(nullable: true)]
     private ?\DateTime $dateLimiteInscription = null;
 
     #[Assert\NotBlank(message: 'Le nombre de places est obligatoire.')]
-    #[Assert\Positive(message: 'Le nombre de places doit être supérieur à 0.')]
+    #[Assert\GreaterThanOrEqual(value: 2, message: 'Il faut au moins {{ compared_value }} participants pour une sortie.')]
     #[ORM\Column]
     private ?int $nbInscriptionMax = null;
 
@@ -83,6 +84,11 @@ class Sortie
     #[ORM\ManyToOne(inversedBy: 'sorties')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Campus $campus = null;
+
+    #[Assert\NotBlank(message: 'Le motif d\'annulation est obligatoire.', groups: ['Annuler'])]
+    #[Assert\Length(min: 10, minMessage: 'Le motif doit contenir au moins 10 caractères.', groups: ['Annuler'])]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $motifAnnulation = null;
 
     public function __construct()
     {
@@ -227,5 +233,15 @@ class Sortie
         return $this;
     }
 
+    public function getMotifAnnulation(): ?string
+    {
+        return $this->motifAnnulation;
+    }
 
+    public function setMotifAnnulation(?string $motifAnnulation): static
+    {
+        $this->motifAnnulation = $motifAnnulation;
+
+        return $this;
+    }
 }

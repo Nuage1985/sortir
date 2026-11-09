@@ -9,6 +9,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -26,7 +27,7 @@ class SortieType extends AbstractType
             ->add('nom', TextType::class, [
                 'label' => 'Titre de la sortie',
                 'label_attr' => ['class' => $labelAttr],
-                'attr' => ['class' => $disabledInputAttr],
+                'attr' => ['class' => $inputAttr],
             ])
             ->add('campus', EntityType::class, [
                 'class' => Campus::class,
@@ -37,7 +38,7 @@ class SortieType extends AbstractType
                 'disabled' => true,
             ])
             ->add('dateHeureDebut', null, [
-                'label' => 'Date et heure de début',
+                'label' => 'Date et heure de la sortie',
                 'label_attr' => ['class' => $labelAttr],
                 'attr' => ['class' => $inputAttr],
                 'widget' => 'single_text',
@@ -72,6 +73,14 @@ class SortieType extends AbstractType
                 'class' => Lieu::class,
                 'choice_label' => 'nom',
                 'placeholder' => '-- Choisir un lieu --',
+            ])
+            ->add('enregistrer', SubmitType::class, [
+                'label' => 'Enregistrer',
+                'attr' => ['class' => 'cursor-pointer text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-500 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none'],
+            ])
+            ->add('publier', SubmitType::class, [
+                'label' => 'Publier',
+                'attr' => ['class' => 'cursor-pointer text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-500 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none'],
             ])
         ;
     }
