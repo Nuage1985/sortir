@@ -168,7 +168,7 @@
                                 <br><form method="post" action="{{ path('sortie_desister', { id: sortie.id }) }}">
                                         <input type="hidden" name="_token" value="{{ csrf_token('desister_sortie_' ~ sortie.id) }}">
                                         <button type="submit" class="font-medium text-blue-500 hover:underline">Se désister</button>
-                                    </form>
+                                    </form> <!--COmmentaire test-->
                             {% endif %}
                         </td>
                     </tr>
