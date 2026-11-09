@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -14,7 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity(fields: ['mail'], message: 'Ce compte mail existe déjà !')]
 #[UniqueEntity(fields: ['pseudo'], message: 'Ce pseudonyme existe déjà !')]
 #[ORM\Entity(repositoryClass: ParticipantRepository::class)]
-class Participant implements UserInterface, PasswordAuthenticatedUserInterface
+class Participant implements UserInterface, PasswordAuthenticatedUserInterface, EquatableInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -27,7 +28,7 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $pseudo = null;
 
     #[Assert\NotBlank(message: 'Merci de saisir un nom')]
-    #[Assert\Length(min:2, max: 50)]
+    #[Assert\Length(min: 2, max: 50)]
     #[ORM\Column(length: 50)]
     private ?string $nom = null;
 
@@ -38,8 +39,10 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $prenom = null;
 
     #[Assert\Length(max: 20)]
-    #[Assert\Regex("/^(?:\\+33|0033|0)[1-9]\\d{8}$/",
-        message: 'Veuillez utiliser un numéro de téléphone valide')]
+    #[Assert\Regex(
+        pattern: '/^0[1-9]\d{8}$/',
+        message: 'Veuillez utiliser un numéro de téléphone valide'
+    )]
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $telephone = null;
 
@@ -112,7 +115,7 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setTelephone(?string $telephone): static
     {
-        $this->telephone = $telephone;
+        $this->telephone = self::normaliserTelephone($telephone);
 
         return $this;
     }
@@ -238,5 +241,36 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
         $this->filename = $filename;
 
         return $this;
+    }
+
+    // Voir Security/UserChecker + config/packages/security.yaml firewalls user_checker.
+    // Désactivera la session d'un utilisateur si son compte est marqué comme inactif.
+    public function isEqualTo(UserInterface $user): bool
+    {
+        if (!$user instanceof self) {
+            return false;
+        }
+
+        return $this->id === $user->getId()
+            && $this->mail === $user->getMail()
+            && $this->actif === $user->isActif()
+            && $this->admin === $user->isAdmin();
+    }
+
+    // Fonction de filtrage pour enregistrement normalisé du numéro de téléphone en BDD
+    private static function normaliserTelephone(?string $telephone): ?string
+    {
+        if ($telephone === null) {
+            return null;
+        }
+
+        // Retire espaces, points, tirets et parenthèses
+        $telephone = preg_replace('/[\s.\-()]/', '', $telephone);
+
+        // +33 / 0033 (avec ou sans le 0 initial, ex. +33(0)6...) => 0
+        $telephone = preg_replace('/^(?:\+33|0033)0?/', '0', $telephone);
+
+        // Un champ vide devient null plutôt qu'une chaîne vide
+        return $telephone === '' ? null : $telephone;
     }
 }

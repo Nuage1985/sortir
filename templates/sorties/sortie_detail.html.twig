@@ -18,29 +18,29 @@
             <div class="space-y-4">
                 <div>
                     <p class="text-sm text-gray-400">Nom de la sortie</p>
-                    <p class="text-lg">{{ sortie.nom }}</p>
+                    <p class="text-lg text-default">{{ sortie.nom }}</p>
                 </div>
 
                 <div>
                     <p class="text-sm text-gray-400">Date et heure de la sortie</p>
-                    <p class="text-lg">{{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</p>
+                    <p class="text-lg text-default">{{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</p>
                 </div>
 
                 <div>
                     <p class="text-sm text-gray-400">Date limite d'inscription</p>
-                    <p class="text-lg">
+                    <p class="text-lg text-default">
                         {{ sortie.dateLimiteInscription ? sortie.dateLimiteInscription|date('d/m/Y') : 'Non définie' }}
                     </p>
                 </div>
 
                 <div>
                     <p class="text-sm text-gray-400">Nombre de places</p>
-                    <p class="text-lg">{{ sortie.participants|length }} / {{ sortie.nbInscriptionMax }}</p>
+                    <p class="text-lg text-default">{{ sortie.participants|length }} / {{ sortie.nbInscriptionMax }}</p>
                 </div>
 
                 <div>
                     <p class="text-sm text-gray-400">Durée (en minutes)</p>
-                    <p class="text-lg">
+                    <p class="text-lg text-default">
                         {{ sortie.duree ? sortie.duree|date('H:i') : 'Non définie' }}
                     </p>
                 </div>
@@ -49,32 +49,32 @@
             <div class="space-y-4">
                 <div>
                     <p class="text-sm text-gray-400">Campus</p>
-                    <p class="text-lg">{{ sortie.campus.nom }}</p>
+                    <p class="text-lg text-default">{{ sortie.campus.nom }}</p>
                 </div>
 
                 <div>
                     <p class="text-sm text-gray-400">Ville</p>
-                    <p class="text-lg">{{ sortie.lieu.ville.nom }}</p>
+                    <p class="text-lg text-default">{{ sortie.lieu.ville.nom }}</p>
                 </div>
 
                 <div>
                     <p class="text-sm text-gray-400">Lieu</p>
-                    <p class="text-lg">{{ sortie.lieu.nom }}</p>
+                    <p class="text-lg text-default">{{ sortie.lieu.nom }}</p>
                 </div>
 
                 <div>
                     <p class="text-sm text-gray-400">Rue</p>
-                    <p class="text-lg">{{ sortie.lieu.rue }}</p>
+                    <p class="text-lg text-default">{{ sortie.lieu.rue }}</p>
                 </div>
 
                 <div>
                     <p class="text-sm text-gray-400">Code postal</p>
-                    <p class="text-lg">{{ sortie.lieu.ville.codePostal }}</p>
+                    <p class="text-lg text-default">{{ sortie.lieu.ville.codePostal }}</p>
                 </div>
 
                 <div>
                     <p class="text-sm text-gray-400">Latitude / Longitude</p>
-                    <p class="text-lg">
+                    <p class="text-lg text-default">
                         {{ sortie.lieu.latitude ?? '-' }} / {{ sortie.lieu.longitude ?? '-' }}
                     </p>
                 </div>
@@ -83,15 +83,25 @@
 
         <div class="mt-8 border-t border-gray-700 pt-6">
             <p class="text-sm text-gray-400 mb-2">Description et infos</p>
-            <p class="text-body leading-relaxed">
+            <p class="text-default leading-relaxed">
                 {{ sortie.infosSortie ?: 'Aucune information supplémentaire.' }}
             </p>
         </div>
 
+        {% if sortie.etat.value === 'Annulee' %}
+        <div class="mt-8 p-4 border border-red-700 pt-6">
+            <p class="text-red-500 mb-2">Cette sortie est annulée : </p>
+            <p class="text-default leading-relaxed">
+                {{ sortie.motifAnnulation }}
+            </p>
+        </div>
+        {% endif %}
+
+
         <div class="mt-8">
             <h2 class="text-lg font-semibold text-heading mb-3">Liste des participants inscrits</h2>
             <table class="w-full max-w-md text-left border border-gray-700 text-body">
-                <thead class="bg-gray-700">
+                <thead class="bg-gray-700 text-heading">
                 <tr>
                     <th class="px-3 py-2">Pseudo</th>
                     <th class="px-3 py-2">Nom</th>
@@ -102,11 +112,22 @@
                     <tr class="border-t border-gray-700">
                         <td class="px-3 py-2">
                             <a href="{{ path('profile_details', {id: participant.id}) }}"
-                               class="text-blue-400 hover:underline">
+                               class="inline-flex items-center gap-2 text-blue-400 hover:underline">
+                                {% if participant.filename %}
+                                    <img class="w-8 h-8 rounded-full ring-2 ring-github-dark-blue flex-shrink-0"
+                                         src="{{ asset(app_public_images_directory ~'/'~participant.filename) }}"
+                                         alt="Photo de profil de {{ participant.pseudo }}">
+                                {% else %}
+                                    <img class="w-8 h-8 rounded-full ring-2 ring-github-dark-blue flex-shrink-0"
+                                         src="{{ asset('img/default_profile.png') }}"
+                                         alt="Silhouette de profil utilisateur, par défaut">
+                                {% endif %}
                                 {{ participant.pseudo }}
                             </a>
                         </td>
-                        <td class="px-3 py-2">{{ participant.prenom }} {{ participant.nom|upper }}</td>
+                        <td class="px-3 py-2 text-default">
+                            {{ participant.prenom }} {{ participant.nom|upper }}
+                        </td>
                     </tr>
                 {% else %}
                     <tr>
@@ -136,6 +157,19 @@
                         Se désister
                     </button>
                 </form>
+            {% endif %}
+            {% if sortie.etat.value !== 'Annulee' %}
+                <button class="cursor-pointer px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white">
+                    S'inscrire
+                </button>
+                <button class="cursor-pointer px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white">
+                    Se désister
+                </button>
+            {% elseif sortie.etat.value == 'Annulee' %}
+                <a class="cursor-pointer text-white bg-gray-600 hover:bg-gray-700 focus:ring-4 focus:ring-gray-500 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none inline-block"
+                   href="{{ path('main_home') }}">
+                    Retour
+                </a>
             {% endif %}
         </div>
     </div>

@@ -35,7 +35,7 @@
             </div>
             <div class="flex flex-col py-3">
                 <dt class="mb-1 text-body">Téléphone :</dt>
-                <dd class="text-lg font-medium">{{ participant.telephone }}</dd>
+                <dd class="text-lg font-medium">{{ participant.telephone|split('', 2)|join(' ') }}</dd>
             </div>
             <div class="flex flex-col pt-3">
                 <dt class="mb-1 text-body">E-mail :</dt>

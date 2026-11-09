@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block body %}
+    <h1 class="text-center text-3xl text-heading font-semibold whitespace-nowrap mb-8">Annuler une sortie</h1>
+
+    <div class="max-w-4xl mx-auto bg-github-dark-gray p-6 rounded-lg border-3 border-github-dark-blue">
+
+        {# Informations de la sortie en lecture seule #}
+        <dl class="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2 mb-6">
+            <div>
+                <dt class="text-sm font-medium text-gray-400">Titre</dt>
+                <dd class="mt-1 text-sm text-heading">{{ sortie.nom }}</dd>
+            </div>
+            <div>
+                <dt class="text-sm font-medium text-gray-400">Date et heure</dt>
+                <dd class="mt-1 text-sm text-heading">{{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</dd>
+            </div>
+            <div>
+                <dt class="text-sm font-medium text-gray-400">Campus</dt>
+                <dd class="mt-1 text-sm text-heading">{{ sortie.campus.nom }}</dd>
+            </div>
+            <div>
+                <dt class="text-sm font-medium text-gray-400">Lieu</dt>
+                <dd class="mt-1 text-sm text-heading">{{ sortie.lieu.nom }}</dd>
+            </div>
+            <div>
+                <dt class="text-sm font-medium text-gray-400">Ville</dt>
+                <dd class="mt-1 text-sm text-heading">{{ sortie.lieu.ville.nom }}</dd>
+            </div>
+        </dl>
+
+        <hr class="border-gray-600 my-4">
+
+        {{ form_start(annulerSortieForm) }}
+
+        {# Champ motif d'annulation #}
+        <div class="mb-5">
+            {{ form_label(annulerSortieForm.motifAnnulation, null, {'label_attr': {'class': 'block mb-2.5 text-sm font-medium text-heading'}}) }}
+            {{ form_widget(annulerSortieForm.motifAnnulation) }}
+            {{ form_errors(annulerSortieForm.motifAnnulation) }}
+        </div>
+
+        <button type="submit"
+                class="cursor-pointer text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-500 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none">
+            Annuler la sortie
+        </button>
+
+        <a class="ml-4 cursor-pointer text-white bg-gray-600 hover:bg-gray-700 focus:ring-4 focus:ring-gray-500 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none inline-block"
+           href="{{ path('main_home') }}">
+            Retour
+        </a>
+
+        {{ form_end(annulerSortieForm) }}
+    </div>
+{% endblock %}
+

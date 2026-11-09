@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Sortie;
 use App\Enum\EtatSortie;
+use App\Form\AnnulerSortieType;
 use App\Form\SortieType;
 use App\Repository\CampusRepository;
 use App\Service\SortieService;
@@ -22,11 +23,13 @@ class SortieController extends AbstractController
     public function __construct(
         private readonly SortieService    $sortieService,
         private readonly CampusRepository $campusRepository,
-    ) {}
+    )
+    {
+    }
 
 
     #[Route('/liste', name: 'liste', methods: ['GET'])]
-    public function listSorties(Request $request) : Response
+    public function listSorties(Request $request): Response
     {
 
         $participant = $this->getUser();
@@ -34,20 +37,20 @@ class SortieController extends AbstractController
         $campus = null;
 
         if ($campusId !== null && $campusId !== '') {
-            $campus = $this->campusRepository->find((int) $campusId);
+            $campus = $this->campusRepository->find((int)$campusId);
         }
 
         // Récupération des filtres du formulaire (valeurs interprétées par le service)
         $filtres = [
-            'nom'            => trim((string) $request->query->get('nom', '')),
-            'dateDebut'      => $request->query->get('dateDebut'),
-            'dateFin'        => $request->query->get('dateFin'),
+            'nom' => trim((string)$request->query->get('nom', '')),
+            'dateDebut' => $request->query->get('dateDebut'),
+            'dateFin' => $request->query->get('dateFin'),
             // Une case non cochée n'est pas envoyée : on convertit donc en booléen
-            'organisateur'   => $request->query->getBoolean('organisateur'),
-            'inscrit'        => $request->query->getBoolean('inscrit'),
-            'nonInscrit'     => $request->query->getBoolean('nonInscrit'),
-            'terminees'      => $request->query->getBoolean('terminees'),
-            ];
+            'organisateur' => $request->query->getBoolean('organisateur'),
+            'inscrit' => $request->query->getBoolean('inscrit'),
+            'nonInscrit' => $request->query->getBoolean('nonInscrit'),
+            'terminees' => $request->query->getBoolean('terminees'),
+        ];
 
         $sorties = $this->sortieService->getSortiesFiltered($participant, $campus, $filtres);
 
@@ -95,12 +98,12 @@ class SortieController extends AbstractController
 
         // Si le formulaire est correctement soumis
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
-            // Le champ campus est disabled, il n'est pas soumis : on le ré-affecte
+            // Le champ campus est disabled, il n'est pas soumis : on le réaffecte
             $sortie->setCampus($campus);
             $sortie->setOrganisateur($user);
 
             // Vérifier quel bouton a été cliqué
-            if ($request->request->has('sortieForm[publier]')) {
+            if ($sortieForm->get('publier')->isClicked()) {
                 $sortie->setEtat(EtatSortie::Ouverte);
                 $this->addFlash('success', 'Sortie publiée avec succès !');
             } else {
@@ -123,7 +126,7 @@ class SortieController extends AbstractController
     }
 
     #[Route('/{id}/modifier', name: 'sortie_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
-    public function editSortie(Sortie $sortie, Request $request, EntityManagerInterface $entityManager): Response
+    public function editOuting(Sortie $sortie, Request $request, EntityManagerInterface $entityManager): Response
     {
         // Vérifier que l'utilisateur connecté est bien l'organisateur de la sortie
         $user = $this->getUser();
@@ -146,10 +149,11 @@ class SortieController extends AbstractController
             $sortie->setCampus($campus);
 
             // Vérifier quel bouton a été cliqué
-            if ($request->request->has('sortieForm[publier]')) {
+            if ($sortieForm->get('publier')->isClicked()) {
                 $sortie->setEtat(EtatSortie::Ouverte);
                 $this->addFlash('success', 'Sortie publiée avec succès !');
             } else {
+                $sortie->setEtat(EtatSortie::EnCreation);
                 $this->addFlash('success', 'Sortie mise à jour avec succès !');
             }
 
@@ -191,6 +195,64 @@ class SortieController extends AbstractController
         return $this->redirectToRoute('main_home');
     }
 
+    #[Route('/{id}/publier', name: 'sortie_publier', requirements: ['id' => '\d+'], methods: ['GET'])]
+    public function publish(Sortie $sortie, EntityManagerInterface $entityManager, Request $request): Response
+    {
+        // Vérifier que l'utilisateur connecté est bien l'organisateur de la sortie
+        $user = $this->getUser();
+        if (!$this->sortieService->ensureIsAuthor($sortie, $user)) {
+            throw $this->createAccessDeniedException('Seul l\'organisateur peut publier cette sortie.');
+        }
+
+        // Voir le twig de la page home pour la création du token de publication, ici vérification de sa validité
+        $tokenIsValid = $this->isCsrfTokenValid('publish-token-' . $sortie->getId(), $request->query->get('token'));
+
+        if ($tokenIsValid) {
+            $sortie->setEtat(EtatSortie::Ouverte);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Sortie publiée avec succès !');
+
+            return $this->redirectToRoute('main_home');
+        }
+
+        $this->addFlash('error', 'Erreur lors de la publication de la sortie.');
+        return $this->redirectToRoute('main_home');
+    }
+
+    #[Route('/{id}/annuler', name: 'sortie_annuler', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    public function annulerSortie(Sortie $sortie, EntityManagerInterface $entityManager, Request $request): Response
+    {
+        // Vérifier que l'utilisateur connecté est bien l'organisateur de la sortie
+        $user = $this->getUser();
+        if (!$this->sortieService->ensureIsAuthor($sortie, $user)) {
+            throw $this->createAccessDeniedException('Seul l\'organisateur peut annuler cette sortie.');
+        }
+
+        // Créer le formulaire pré-rempli avec les données de la sortie
+        $annulerSortieForm = $this->createForm(AnnulerSortieType::class, $sortie);
+
+        // Traiter le formulaire
+        $annulerSortieForm->handleRequest($request);
+
+        // Si le formulaire est correctement soumis
+        if ($annulerSortieForm->isSubmitted() && $annulerSortieForm->isValid()) {
+
+            $sortie->setEtat(EtatSortie::Annulee);
+            $entityManager->persist($sortie);
+            $entityManager->flush();
+
+            // Préparer le message avant la redirection
+            $this->addFlash('success', 'Sortie annulée.');
+
+            return $this->redirectToRoute('main_home');
+        }
+
+        return $this->render('sorties/cancel.html.twig', [
+            'sortie' => $sortie,
+            'annulerSortieForm' => $annulerSortieForm,
+        ]);
+    }
     #[Route('/{id}/publier', name: 'publier_sortie', requirements: ['id' => '\d+'], methods: ['POST'])]
     public function publishSortie (int $id, Request $request): Response{
 
