@@ -54,6 +54,8 @@ Deux commandes, dans deux terminaux :
 ```bash
 # Compiler le CSS Tailwind (et le recompiler à chaque modification)
 php bin/console tailwind:build --watch
+# Importer les bibliothèques Javascript
+php bin/console importmap:install
 
 # Démarrer le serveur
 symfony serve -d
