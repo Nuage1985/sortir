@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Participant;
 use App\Form\ProfileType;
 use App\Repository\ParticipantRepository;
+use App\Service\FileUploaderService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -18,7 +19,10 @@ use Symfony\Component\Routing\Attribute\Route;
 final class ProfileController extends AbstractController
 {
     #[Route('/{id}', name: 'profile_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
-    public function editProfile(Participant $participant, Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
+    public function editProfile(Participant                 $participant, Request $request,
+                                EntityManagerInterface      $entityManager,
+                                UserPasswordHasherInterface $passwordHasher,
+                                FileUploaderService         $fileUploader): Response
     {
         // Vérifier que l'utilisateur ne peut modifier que son propre profil
         $this->denyAccessUnlessGranted('ROLE_USER');
@@ -42,24 +46,19 @@ final class ProfileController extends AbstractController
                 $participant->setPassword($hashed);
             }
 
-            /** @var UploadedFile $image */
             $imageFile = $profilForm->get('image')->getData();
             if ($imageFile) {
-                $newFilename = uniqid().'.'.$imageFile->guessExtension();
-                // On déplace le fichier uploader dans un répertoire présent dans "public".
-                try {
-                    $imageFile->move(
-                        $this->getParameter('app.project_images_directory'),
-                        $newFilename
-                    );
-                    $participant->setFilename($newFilename);
-                } catch (FileException $e) {
-                    // ... handle exception
-                }
+                $ancien = $participant->getFilename();
+                $participant->setFilename($fileUploader->upload($imageFile));
             }
 
             $entityManager->persist($participant);
             $entityManager->flush();
+
+            //on supprime l'ancien fichier une fois sur qu'il est remplacé
+            if ($ancien) {
+                $fileUploader->remove($ancien);
+            }
 
             // Préparation du message de redirection
             $this->addFlash('success', 'Profil mis à jour !');
