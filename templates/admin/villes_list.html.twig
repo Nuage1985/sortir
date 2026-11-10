@@ -79,6 +79,14 @@
         </table>
     </div>
 
+    {# Retour à la page d'administration #}
+    <div class="mt-8 flex flex-col items-center sm:flex-row sm:justify-center">
+        <a href="{{ path('admin_dashboard') }}"
+           class="w-full rounded-lg bg-yellow-600 px-4 py-2 text-sm font-medium text-default text-center hover:bg-yellow-700 sm:w-auto">
+            Retour
+        </a>
+    </div>
+
     {# Modal de confirmation de suppression #}
     <div id="deleteModal" tabindex="-1" aria-hidden="true"
          class="hidden fixed inset-0 z-50 flex items-center justify-center w-full h-full bg-black/60">

@@ -16,6 +16,29 @@ class CampusRepository extends ServiceEntityRepository
         parent::__construct($registry, Campus::class);
     }
 
+    public function findByNom(string $nom): array
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.nom LIKE :nom')
+            ->setParameter('nom', '%' . $nom . '%')
+            ->orderBy('c.nom', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function hasCampusUsedInSortie(int $campusId): bool
+    {
+        $count = $this->createQueryBuilder('c')
+            ->select('COUNT(c.id)')
+            ->innerJoin('c.sorties', 's')
+            ->andWhere('c.id = :campusId')
+            ->setParameter('campusId', $campusId)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return (int)$count > 0;
+    }
+
 //    /**
 //     * @return Campus[] Returns an array of Campus objects
 //     */

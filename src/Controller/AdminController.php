@@ -2,8 +2,15 @@
 
 namespace App\Controller;
 
+use App\Entity\Campus;
+use App\Entity\Participant;
 use App\Entity\Ville;
+use App\Form\AdminCampusType;
+use App\Form\AdminProfilesType;
 use App\Form\AdminVillesType;
+use App\Models\FiltreParticipantDTO;
+use App\Repository\CampusRepository;
+use App\Repository\ParticipantRepository;
 use App\Repository\VilleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,6 +25,8 @@ final class AdminController extends AbstractController
 {
     public function __construct(
         private readonly VilleRepository $villeRepository,
+        private readonly CampusRepository $campusRepository,
+        private readonly ParticipantRepository $participantRepository,
     )
     {
     }
@@ -122,7 +131,205 @@ final class AdminController extends AbstractController
         $entityManager->remove($ville);
         $entityManager->flush();
 
-        $this->addFlash('success', 'Ville supprimée avec succès !');
+        $this->addFlash('success', 'Ville supprimée !');
         return $this->redirectToRoute('admin_cities_list');
+    }
+
+    #[Route('/campus-list', name: 'admin_campus_list', methods: ['GET', 'POST'])]
+    public function campusList(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        // Filtre, recherche par nom
+        $nom = trim((string)$request->query->get('nom', ''));
+
+        if ($nom !== '') {
+            $campuses = $this->campusRepository->findByNom($nom);
+        } else {
+            $campuses = $this->campusRepository->findAll();
+        }
+
+        // Créer une nouvelle ville
+        $campus = new Campus();
+
+        // Créer le formulaire
+        $addCampusForm = $this->createForm(AdminCampusType::class, $campus);
+
+        // Traiter le formulaire
+        $addCampusForm->handleRequest($request);
+
+        // Si le formulaire est correctement soumis
+        if ($addCampusForm->isSubmitted() && $addCampusForm->isValid()) {
+
+            $entityManager->persist($campus);
+            $entityManager->flush();
+
+            // Préparation du message de redirection
+            $this->addFlash('success', 'Campus ajoutée !');
+
+            // Redirection vers la page de détail du profil
+            return $this->redirectToRoute('admin_campus_list');
+        }
+
+        // Vue
+        return $this->render('admin/campus_list.html.twig', [
+            'campuses' => $campuses,
+            'nom' => $nom,
+            'addCampusForm' => $addCampusForm,
+            'nonDeletableCampuses' => array_filter(
+                array_map(fn($c) => $c->getId(), $campuses),
+                fn($id) => $this->campusRepository->hasCampusUsedInSortie($id)
+            ),
+        ]);
+    }
+
+    #[Route('/campus-edit/{id}', name: 'admin_campus_edit', methods: ['GET', 'POST'])]
+    public function campusEdit(int $id, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $campus = $this->campusRepository->find($id);
+
+        if (!$campus) {
+            throw $this->createNotFoundException('Campus introuvable.');
+        }
+
+        $editCampusForm = $this->createForm(AdminCampusType::class, $campus, [
+            'include_submit' => false,
+        ]);
+        $editCampusForm->handleRequest($request);
+
+        if ($editCampusForm->isSubmitted() && $editCampusForm->isValid()) {
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Campus modifié avec succès !');
+            return $this->redirectToRoute('admin_campus_list');
+        }
+
+        return $this->render('admin/campus_edit.html.twig', [
+            'editCampusForm' => $editCampusForm,
+            'campus' => $campus,
+        ]);
+    }
+
+    #[Route('/campus-delete/{id}', name: 'admin_campus_delete', methods: ['POST'])]
+    public function campusDelete(int $id, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        if (!$this->isCsrfTokenValid('delete_campus_' . $id, $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token CSRF invalide.');
+            return $this->redirectToRoute('admin_campus_list');
+        }
+
+        $campus = $this->campusRepository->find($id);
+
+        if (!$campus) {
+            throw $this->createNotFoundException('Campus introuvable.');
+        }
+
+        if ($this->campusRepository->hasCampusUsedInSortie($id)) {
+            $this->addFlash('error', 'Ce campus ne peut pas être supprimée car il est associé à une sortie.');
+            return $this->redirectToRoute('admin_campus_list');
+        }
+
+        $entityManager->remove($campus);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Campus supprimée !');
+        return $this->redirectToRoute('admin_campus_list');
+    }
+
+    #[Route('/profiles-list', name: 'admin_profiles_list', methods: ['GET'])]
+    public function usersList(Request $request): Response
+    {
+        // Construire le DTO de filtres depuis les paramètres GET
+        $page = max(1, (int)$request->query->get('page', 1));
+
+        $filtres = new FiltreParticipantDTO(
+            nom: trim((string)$request->query->get('nom', '')),
+            prenom: trim((string)$request->query->get('prenom', '')),
+            pseudo: trim((string)$request->query->get('pseudo', '')),
+            actif: $request->query->get('actif') === '1' ? true : ($request->query->get('actif') === '0' ? false : null),
+            page: $page,
+        );
+
+        // Nombre de résultats par page
+        $limit = 10;
+        $offset = ($page - 1) * $limit;
+
+        // Récupérer les participants filtrés avec pagination
+        $participants = $this->participantRepository->findFiltered($filtres, $limit, $offset);
+
+        // Compter le nombre total de résultats pour la pagination
+        $total = $this->participantRepository->countFiltered($filtres);
+        $totalPages = max(1, (int)ceil($total / $limit));
+
+        return $this->render('admin/profiles_list.html.twig', [
+            'participants' => $participants,
+            'filtres' => $filtres,
+            'totalPages' => $totalPages,
+            'currentPage' => $page,
+        ]);
+    }
+
+    #[Route('/profile-create', name: 'admin_profile_create', methods: ['GET', 'POST'])]
+    public function createUser(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        // Créer un nouvel utilisateur (Participant)
+        $participant = new Participant();
+
+        // Créer le formulaire
+        $profilCreateForm = $this->createForm(AdminProfilesType::class, $participant, [
+            'include_actif' => false,
+        ]);
+
+        // Traiter le formulaire
+        $profilCreateForm->handleRequest($request);
+
+        // Si le formulaire est correctement soumis
+        if ($profilCreateForm->isSubmitted() && $profilCreateForm->isValid()) {
+
+            $entityManager->persist($participant);
+            $entityManager->flush();
+
+            // Préparation message flash
+            $this->addFlash('success', 'Nouveau profil créé');
+
+            // Redirection vers la liste des utilisateurs
+            return $this->redirectToRoute('admin_profiles_list');
+        }
+
+        return $this->render('admin/profile_create.html.twig', [
+            'profilCreateForm' => $profilCreateForm,
+        ]);
+    }
+
+    #[Route('/profile-edit/{id}', name: 'admin_profile_edit', methods: ['GET', 'POST'])]
+    public function editUser(int $id, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        // Récupérer le profil à éditer
+        $participant = $this->participantRepository->find($id);
+
+        if (!$participant) {
+            throw $this->createNotFoundException('Profil introuvable.');
+        }
+
+        // Créer le formulaire avec le champ "actif"
+        $profilEditForm = $this->createForm(AdminProfilesType::class, $participant, [
+            'include_actif' => true,
+        ]);
+
+        // Traiter le formulaire
+        $profilEditForm->handleRequest($request);
+
+        // Si le formulaire est correctement soumis
+        if ($profilEditForm->isSubmitted() && $profilEditForm->isValid()) {
+            $entityManager->flush();
+
+            // Message flash et redirection
+            $this->addFlash('success', 'Profil modifié avec succès !');
+
+            return $this->redirectToRoute('admin_profiles_list');
+        }
+
+        return $this->render('admin/profile_edit.html.twig', [
+            'profilEditForm' => $profilEditForm,
+            'participant' => $participant,
+        ]);
     }
 }

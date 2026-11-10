@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[UniqueEntity(fields: ['nom'], message: 'Ce compte campus existe déjà.')]
+#[UniqueEntity(fields: ['nom'], message: 'Ce campus existe déjà !')]
 #[ORM\Entity(repositoryClass: CampusRepository::class)]
 
 class Campus
@@ -20,7 +20,8 @@ class Campus
     private ?int $id = null;
 
     #[Assert\NotBlank(message: 'Merci de saisir un campus')]
-    #[Assert\Length(min: 2, max: 180)]
+    #[Assert\Length(min: 2, max: 180,
+        minMessage: '2 caractères minimum (ex: Ur)', maxMessage: '180 caractères maximum')]
     #[ORM\Column(length: 180)]
     private ?string $nom = null;
 
