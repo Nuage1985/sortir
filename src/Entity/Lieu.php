@@ -33,7 +33,7 @@ class Lieu
     #[ORM\OneToMany(targetEntity: Sortie::class, mappedBy: 'lieu')]
     private Collection $sorties;
 
-    #[ORM\ManyToOne(inversedBy: 'lieus')]
+    #[ORM\ManyToOne(inversedBy: 'lieux')]
     private ?Ville $ville = null;
 
     public function __construct()
