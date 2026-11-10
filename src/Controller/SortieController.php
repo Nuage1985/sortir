@@ -229,16 +229,7 @@ class SortieController extends AbstractController
             throw $this->createAccessDeniedException('Seul l\'organisateur peut annuler cette sortie.');
         }
 
-        // Valider le jeton CSRF pour les requêtes POST
-        if ($request->isMethod('POST')) {
-            $token = $request->request->get('_token');
-            if (!$this->isCsrfTokenValid('annuler_sortie_' . $sortie->getId(), $token)) {
-                $this->addFlash('error', 'Jeton CSRF invalide.');
-                return $this->redirectToRoute('main_home');
-            }
-        }
-
-        // Créer le formulaire pré-rempli avec les données de la sortie
+        // Créer le formulaire avec le motif d'annulation
         $annulerSortieForm = $this->createForm(AnnulerSortieType::class, $sortie);
 
         // Traiter le formulaire
