@@ -6,6 +6,7 @@ use App\Entity\Sortie;
 use App\Enum\EtatSortie;
 use App\Form\AnnulerSortieType;
 use App\Form\SortieType;
+use App\Models\FiltreSortieDTO;
 use App\Repository\CampusRepository;
 use App\Service\SortieService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -41,18 +42,17 @@ class SortieController extends AbstractController
         }
 
         // Récupération des filtres du formulaire (valeurs interprétées par le service)
-        $filtres = [
-            'nom' => trim((string)$request->query->get('nom', '')),
-            'dateDebut' => $request->query->get('dateDebut'),
-            'dateFin' => $request->query->get('dateFin'),
-            // Une case non cochée n'est pas envoyée : on convertit donc en booléen
-            'organisateur' => $request->query->getBoolean('organisateur'),
-            'inscrit' => $request->query->getBoolean('inscrit'),
-            'nonInscrit' => $request->query->getBoolean('nonInscrit'),
-            'terminees' => $request->query->getBoolean('terminees'),
-        ];
+        $q = $request->query;
+        $filtres = new FiltreSortieDTO(
+            nom:          trim((string) $q->get('nom', '')),
+            dateDebut:    $q->get('dateDebut') ?: null,
+            dateFin:      $q->get('dateFin') ?: null,
+            organisateur: $q->getBoolean('organisateur'),
+            inscrit:      $q->getBoolean('inscrit'),
+            etat:         $q->getBoolean('terminees') ? EtatSortie::Terminee : null,
+        );
 
-        $sorties = $this->sortieService->getSortiesFiltered($participant, $campus, $filtres);
+        $sorties = $this->sortieService->getSortiesFiltered($participant, $filtres, $campus);
 
         return $this->render('main/home.html.twig', [
             'sorties' => $sorties,

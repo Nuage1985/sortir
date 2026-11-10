@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\Campus;
 use App\Entity\Participant;
 use App\Entity\Sortie;
+use App\Models\FiltreSortieDTO;
 use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -14,8 +15,8 @@ interface SortieService
 
     public function getSortiesFiltered(
         Participant $participant,
+        FiltreSortieDTO $filtres,
         ?Campus $campus = null,
-        array $filtres = []
     ): array;
 
     public function isVisibleForParticipant(Sortie $sortie, Participant $participant): bool;
