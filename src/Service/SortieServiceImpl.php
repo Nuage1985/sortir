@@ -83,7 +83,7 @@ readonly class SortieServiceImpl implements SortieService
             return null;
         }
 
-        // On vérifie l'état de la Sortie, seul une sorite en cré"ation peut être ouverte
+        // On vérifie l'état de la Sortie, seul une sortie en création peut être ouverte
         if ($sortie->getEtat() === EtatSortie::EnCreation) {
             $sortie->setEtat(EtatSortie::Ouverte);
             $this->entityManager->flush(); //On envoie les Upsert/Delete dans la base

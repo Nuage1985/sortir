@@ -1,5 +1,9 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}
+    Création | {{ parent() }}
+{% endblock %}
+
 {% block body %}
     <h1 class="text-center text-3xl text-heading font-semibold whitespace-nowrap my-4">Créer une sortie</h1>
 
@@ -110,10 +114,6 @@
         </div>
         {{ form_end(sortieForm) }}
     </div>
-{% endblock %}
-
-{% block title %}
-    {{ parent() }} | Création
 {% endblock %}
 
 {% block javascripts %}

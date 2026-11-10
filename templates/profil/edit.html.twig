@@ -1,5 +1,9 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}
+    Profil {{ participant.pseudo }} | {{ parent() }}
+{% endblock %}
+
 {% block body %}
     <h1 class="text-center text-3xl text-heading font-semibold whitespace-nowrap mb-8">Mon Profil</h1>
 
@@ -94,8 +98,4 @@
 
         {{ form_end(profilForm) }}
     </div>
-{% endblock %}
-
-{% block title %}
-    {{ parent() }} | Profil {{ participant.pseudo }}
 {% endblock %}

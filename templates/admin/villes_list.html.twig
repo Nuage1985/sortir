@@ -1,0 +1,143 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Liste des villes | {{ parent() }}
+{% endblock %}
+
+{% block body %}
+
+    {# Formulaire de recherche par nom #}
+    <form method="get" action="{{ path('admin_cities_list') }}"
+          class="mb-6 flex flex-wrap items-center gap-3 rounded-lg border border-gray-600 bg-github-dark-gray p-4 text-heading">
+        <label for="nom" class="text-sm">Le nom de la ville contient</label>
+        <input type="search" name="nom" id="nom" placeholder="Rechercher une ville" value="{{ nom|default('') }}"
+               class="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-heading placeholder:text-gray-400 focus:outline-none">
+
+        <button type="submit"
+                class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">Rechercher
+        </button>
+    </form>
+
+    {# Tableau des villes #}
+    <div class="overflow-x-auto bg-github-dark-gray text-heading shadow-sm rounded-lg border border-gray-600">
+        <table class="w-full text-sm text-left text-heading">
+            <thead class="bg-gray-700 border-b border-gray-600">
+            <tr>
+                <th scope="col" class="px-6 py-3 font-medium">Nom</th>
+                <th scope="col" class="px-6 py-3 font-medium">Code postal</th>
+                <th scope="col" class="px-6 py-3 font-medium">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for ville in villes|default([]) %}
+                <tr class="border-b border-gray-600 odd:bg-github-dark-gray even:bg-gray-800">
+                    <th scope="row" class="px-6 py-4 font-medium text-heading whitespace-nowrap">
+                        {{ ville.nom }}
+                    </th>
+                    <td class="px-6 py-4">{{ ville.codePostal }}</td>
+                    <td class="px-6 py-4">
+                        <a href="{{ path('admin_city_edit', { id: ville.id }) }}"
+                           class="font-medium text-blue-500 hover:underline">Modifier</a><br>
+                        {% if ville.id not in nonDeletableCities|default([]) %}
+                            <button type="button"
+                                    class="font-medium text-red-500 hover:underline"
+                                    data-ville-id="{{ ville.id }}"
+                                    data-ville-nom="{{ ville.nom }}"
+                                    data-delete-url="{{ path('admin_city_delete', { id: ville.id }) }}"
+                                    data-csrf-token="{{ csrf_token('delete_city_' ~ ville.id) }}"
+                                    onclick="openDeleteModal(this)">
+                                Supprimer
+                            </button>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3" class="px-6 py-4 text-center">Aucune ville à afficher.</td>
+                </tr>
+            {% endfor %}
+
+            {# Ligne d'ajout d'une nouvelle ville #}
+            <tr class="border-b border-gray-600 bg-gray-700">
+                <td colspan="3" class="px-6 py-4 text-center">
+                    {{ form_start(addCityForm, {'attr': {'class': 'flex flex-wrap items-center justify-center gap-2'}}) }}
+                    <div>
+                        <label for="{{ addCityForm.nom.vars.id }}" class="sr-only">Nom de la ville</label>
+                        {{ form_widget(addCityForm.nom, {'attr': {'class': 'bg-gray-800 border border-gray-600 text-heading text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 px-3 py-2 placeholder:text-gray-400', 'placeholder': 'Nom de la ville'}}) }}
+                        {{ form_errors(addCityForm.nom) }}
+                    </div>
+                    <div>
+                        <label for="{{ addCityForm.codePostal.vars.id }}" class="sr-only">Code postal</label>
+                        {{ form_widget(addCityForm.codePostal, {'attr': {'class': 'bg-gray-800 border border-gray-600 text-heading text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 px-3 py-2 placeholder:text-gray-400', 'placeholder': 'Code postal'}}) }}
+                        {{ form_errors(addCityForm.codePostal) }}
+                    </div>
+                    {{ form_widget(addCityForm.save) }}
+                    {{ form_end(addCityForm) }}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    {# Modal de confirmation de suppression #}
+    <div id="deleteModal" tabindex="-1" aria-hidden="true"
+         class="hidden fixed inset-0 z-50 flex items-center justify-center w-full h-full bg-black/60">
+        <div class="relative p-4 w-full max-w-md">
+            <div class="relative bg-github-dark-gray rounded-lg shadow-sm border border-gray-600">
+                <div class="p-6 text-center">
+                    <button type="button"
+                            class="text-gray-400 hover:text-heading absolute top-3 right-3 text-sm font-medium"
+                            onclick="closeDeleteModal()">
+                        &times;
+                    </button>
+                    <svg class="mx-auto mb-4 w-12 h-12 text-orange-500" aria-hidden="true" fill="none"
+                         stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 9v3m0 3v.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                    <h3 class="mb-2 text-lg font-medium text-heading">
+                        Êtes-vous sûr de vouloir supprimer <span id="deleteModalVilleName"></span> ?
+                    </h3>
+                    <p class="mb-5 text-sm text-gray-400">Cette action est irréversible.</p>
+                    <form id="deleteModalForm" method="post">
+                        <input type="hidden" name="_token" id="deleteModalToken">
+                        <div class="flex gap-3 justify-center">
+                            <button type="button"
+                                    class="text-heading bg-gray-700 border border-gray-600 hover:bg-gray-600 font-medium rounded-lg text-sm px-5 py-2.5"
+                                    onclick="closeDeleteModal()">
+                                Non, annuler
+                            </button>
+                            <button type="submit"
+                                    class="text-white bg-red-600 hover:bg-red-700 font-medium rounded-lg text-sm px-5 py-2.5">
+                                Oui, supprimer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openDeleteModal(btn) {
+            document.getElementById('deleteModalVilleName').textContent = btn.dataset.villeNom;
+            document.getElementById('deleteModalToken').value = btn.dataset.csrfToken;
+            document.getElementById('deleteModalForm').action = btn.dataset.deleteUrl;
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+        }
+
+        // Fermer le modal en cliquant en dehors
+        document.getElementById('deleteModal').addEventListener('click', function (e) {
+            if (e.target === this) closeDeleteModal();
+        });
+        // Fermer le modal avec la touche Escape
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeDeleteModal();
+        });
+    </script>
+{% endblock %}
+
