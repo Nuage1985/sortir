@@ -152,7 +152,7 @@
                     {% set estOrganisateur = sortie.organisateur == app.user %}
                     {% set estInscrit = sortie.participants.contains(app.user) %}
                     {% if sortie.etat.value not in ['Historise', 'Historisee'] and sortie.etat.libelle != 'Historisée' %}
-                    <tr class="border-b border-gray-600 bg-github-dark-gray">
+                    <tr class="border-b border-gray-600 odd:bg-github-dark-gray even:bg-gray-800">
                         <th scope="row" class="px-6 py-4 font-medium text-heading whitespace-nowrap">
                             {{ sortie.nom }}
                         </th>
@@ -194,13 +194,8 @@
                             {% endif %}
 
                             {% if estOrganisateur and sortie.etat.value == 'Ouverte' %}
-                                <br>
-                                <form method="post" action="{{ path('sortie_annuler', { id: sortie.id }) }}">
-                                    <input type="hidden" name="_token"
-                                           value="{{ csrf_token('annuler_sortie_' ~ sortie.id) }}">
-                                    <button type="submit" class="font-medium text-orange-500 hover:underline">Annuler
-                                    </button>
-                                </form>
+                                <br><a href="{{ path('sortie_annuler', { id: sortie.id}) }}"
+                                       class="font-medium text-orange-500 hover:underline">Annuler</a>
                             {% endif %}
 
                             {% if estInscrit and sortie.etat.value == 'Ouverte' %}

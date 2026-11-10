@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Administration | {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    {# Affichage des infos admin + date #}
+    <div class="flex flex-wrap items-center justify-end gap-4 m-4">
+        <div
+            class="bg-github-dark-gray text-default p-4 w-fit rounded-lg border-3 border-github-dark-blue flex items-center justify-between gap-4">
+            <div>
+                <p class="mb-1">Date du jour : {{ "now"|date("d/m/Y") }}</p>
+                <p>Admin : {{ app.user.prenom }} {{ app.user.nom | first }}.</p>
+            </div>
+            {# Photo de profil si existante ou image par défaut #}
+            {% if app.user.filename %}
+                <img class="w-10 h-10 rounded-full ring-3 ring-github-dark-blue flex-shrink-0"
+                     src="{{ asset(app_public_images_directory ~'/'~app.user.filename) }}"
+                     alt="Photo de profil de {{ app.user.pseudo }}">
+            {% else %}
+                <img class="w-10 h-10 rounded-full ring-3 ring-github-dark-blue flex-shrink-0"
+                     src="{{ asset('img/default_profile.png') }}"
+                     alt="Silhouette de profil utilisateur, par défaut">
+            {% endif %}
+        </div>
+    </div>
+    <div class="flex flex-1 flex-col items-center justify-center gap-4 sm:flex-row sm:flex-wrap sm:gap-8">
+        <a href="{{ path('admin_cities_list') }}" class="w-full max-w-xs text-center sm:w-auto text-default bg-purple-600 hover:bg-purple-800 focus:ring-4 focus:ring-purple-500 font-medium rounded-none text-lg px-4 py-2.5 focus:outline-none">Gérer les campus</a>
+        <a href="#" class="w-full max-w-xs text-center sm:w-auto text-default bg-cyan-600 hover:bg-cyan-800 focus:ring-4 focus:ring-cyan-500 font-medium rounded-none text-lg px-4 py-2.5 focus:outline-none">Gérer les villes</a>
+        <a href="#" class="w-full max-w-xs text-center sm:w-auto text-default bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:ring-yellow-500 font-medium rounded-none text-lg px-4 py-2.5 focus:outline-none">Gérer les utilisateurs</a>
+    </div>
+{% endblock %}
+
+

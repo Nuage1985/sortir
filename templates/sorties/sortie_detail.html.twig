@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Afficher une sortie{% endblock %}
+{% block title %}Détails {{ sortie.nom }} | {{ parent() }}{% endblock %}
 
 {% block body %}
     <div class="max-w-4xl mx-auto bg-github-dark-gray border border-github-dark-blue rounded-lg p-6 shadow-lg">
