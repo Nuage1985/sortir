@@ -9,6 +9,7 @@ use App\Form\SortieType;
 use App\Models\FiltreSortieDTO;
 use App\Repository\CampusRepository;
 use App\Service\SortieService;
+use App\Service\SortieStatusService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,6 +25,7 @@ class SortieController extends AbstractController
     public function __construct(
         private readonly SortieService    $sortieService,
         private readonly CampusRepository $campusRepository,
+        private readonly SortieStatusService $sortieStatusService,
     )
     {
     }
@@ -56,6 +58,7 @@ class SortieController extends AbstractController
 
         return $this->render('main/home.html.twig', [
             'sorties' => $sorties,
+            $this->sortieStatusService->refreshStatus(),
             'campusList' => $this->campusRepository->findAll(),
             //On affiche le campus par défaut
             'campusSelectionne' => $campus ?? $this->sortieService->getCampusByDefault($participant),
