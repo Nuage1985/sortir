@@ -1,0 +1,51 @@
+pseudo,nom,prenom,telephone,mail,password,admin,actif,campus
+LouisMor,Moreau,Louis,0733218196,moreau-louis@eni.fr,Password123!,0,0,Quimper
+ThéoGue,Guerin,Théo,0683863794,guerin-theo@eni.fr,Password123!,0,1,Quimper
+InèsLeG,Le Gall,Inès,0742351161,le-gall-ines@eni.fr,Password123!,0,1,Nantes
+MélanieRou,Roussel,Mélanie,0678161849,roussel-melanie@eni.fr,Password123!,0,1,Nantes
+JustineMer,Mercier,Justine,0603413164,mercier-justine@eni.fr,Password123!,0,1,Nantes
+InèsDum,Dumont,Inès,0734192832,dumont-ines@eni.fr,Password123!,0,1,Nantes
+FlorianGue,Guerin,Florian,0703056413,guerin-florian@eni.fr,Password123!,0,1,Marseille
+ÉlodieBla,Blanc,Élodie,0767242388,blanc-elodie@eni.fr,Password123!,0,1,Marseille
+MathisDuv,Duval,Mathis,0753287101,duval-mathis@eni.fr,Password123!,0,1,Rennes
+MathisDen,Denis,Mathis,0666978480,denis-mathis@eni.fr,Password123!,0,1,Quimper
+MorganeNic,Nicolas,Morgane,0714627048,nicolas-morgane@eni.fr,Password123!,0,1,Marseille
+ChloéMor,Morin,Chloé,0625288095,morin-chloe@eni.fr,Password123!,0,1,Quimper
+KévinMor,Morin,Kévin,0603911718,morin-kevin@eni.fr,Password123!,0,1,Rennes
+LucieMas,Masson,Lucie,0648963834,masson-lucie@eni.fr,Password123!,0,1,Point à Pitre
+KévinLeG,Le Goff,Kévin,0713315098,le-goff-kevin@eni.fr,Password123!,0,1,Rennes
+CamilleFon,Fontaine,Camille,0631051834,fontaine-camille@eni.fr,Password123!,0,1,Rennes
+MorganeLer,Leroy,Morgane,0737631165,leroy-morgane@eni.fr,Password123!,0,1,Paris
+HugoVin,Vincent,Hugo,0665133387,vincent-hugo@eni.fr,Password123!,0,1,Rennes
+AntoineKer,Kerjean,Antoine,0617810801,kerjean-antoine@eni.fr,Password123!,0,1,Rennes
+InèsRob,Robin,Inès,0773602606,robin-ines@eni.fr,Password123!,0,1,Paris
+PaulineLeG,Le Gall,Pauline,0723430980,le-gall-pauline@eni.fr,Password123!,0,1,Quimper
+HugoDuv,Duval,Hugo,0788208121,duval-hugo@eni.fr,Password123!,0,1,Point à Pitre
+MaximeFou,Fournier,Maxime,0693990916,fournier-maxime@eni.fr,Password123!,0,1,Marseille
+ErwanMat,Mathieu,Erwan,0735346247,mathieu-erwan@eni.fr,Password123!,0,1,Quimper
+CamilleKer,Kerjean,Camille,0618384251,kerjean-camille@eni.fr,Password123!,0,1,Nantes
+PaulineFau,Faure,Pauline,0784980841,faure-pauline@eni.fr,Password123!,0,1,Rennes
+ClaraMul,Muller,Clara,0682449353,muller-clara@eni.fr,Password123!,0,1,Nantes
+GaëlleRio,Riou,Gaëlle,0701640052,riou-gaelle@eni.fr,Password123!,0,1,Nantes
+InèsLeG2,Le Goff,Inès,0780112805,le-goff-ines@eni.fr,Password123!,0,1,Rennes
+MathisLer,Leroy,Mathis,0645053315,leroy-mathis@eni.fr,Password123!,0,1,Paris
+DylanGar,Garnier,Dylan,0622602563,garnier-dylan@eni.fr,Password123!,0,1,Point à Pitre
+ChloéLop,Lopez,Chloé,0673375433,lopez-chloe@eni.fr,Password123!,0,0,Rennes
+QuentinCle,Clement,Quentin,0714586850,clement-quentin@eni.fr,Password123!,0,1,Nantes
+ArthurDuv,Duval,Arthur,0701965569,duval-arthur@eni.fr,Password123!,0,1,Quimper
+LauraMar,Marchand,Laura,0640608835,marchand-laura@eni.fr,Password123!,0,1,Point à Pitre
+ThomasLem,Lemoine,Thomas,0714846564,lemoine-thomas@eni.fr,Password123!,0,1,Rennes
+OcéaneLop,Lopez,Océane,0699468044,lopez-oceane@eni.fr,Password123!,0,1,Marseille
+MélanieMat,Mathieu,Mélanie,0777387214,mathieu-melanie@eni.fr,Password123!,0,1,Point à Pitre
+DylanCle,Clement,Dylan,0634332003,clement-dylan@eni.fr,Password123!,0,1,Marseille
+LéaKer,Kerjean,Léa,0793676320,kerjean-lea@eni.fr,Password123!,0,1,Quimper
+MathisGue,Guerin,Mathis,0687083172,guerin-mathis@eni.fr,Password123!,0,1,Point à Pitre
+ErwanMas,Masson,Erwan,0779868727,masson-erwan@eni.fr,Password123!,0,1,Rennes
+AntoineJao,Jaouen,Antoine,0734714345,jaouen-antoine@eni.fr,Password123!,0,1,Marseille
+NathanLer,Leroy,Nathan,0636231665,leroy-nathan@eni.fr,Password123!,0,1,Paris
+HugoBla,Blanc,Hugo,0769096705,blanc-hugo@eni.fr,Password123!,0,1,Paris
+OcéaneBon,Bonnet,Océane,0673467065,bonnet-oceane@eni.fr,Password123!,0,1,Paris
+InèsKer,Kerjean,Inès,0698069901,kerjean-ines@eni.fr,Password123!,0,1,Rennes
+BastienAnd,André,Bastien,0646537556,andre-bastien@eni.fr,Password123!,0,1,Paris
+ClaraRou,Rousseau,Clara,0708053100,rousseau-clara@eni.fr,Password123!,0,1,Rennes
+LucasLem,Lemoine,Lucas,0632719374,lemoine-lucas@eni.fr,Password123!,0,1,Rennes

@@ -8,10 +8,12 @@ use App\Entity\Ville;
 use App\Form\AdminCampusType;
 use App\Form\AdminProfilesType;
 use App\Form\AdminVillesType;
+use App\Form\ImportCsvType;
 use App\Models\FiltreParticipantDTO;
 use App\Repository\CampusRepository;
 use App\Repository\ParticipantRepository;
 use App\Repository\VilleRepository;
+use App\Service\ImporterCSVService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -346,6 +348,28 @@ final class AdminController extends AbstractController
         return $this->render('admin/profile_edit.html.twig', [
             'profilEditForm' => $profilEditForm,
             'participant' => $participant,
+        ]);
+    }
+
+    #[Route('/admin/profiles/import', name: 'admin_profiles_import', methods: ['GET', 'POST'])]
+    public function importCsv(Request $request, ImporterCSVService $importer): Response
+    {
+        $form = $this->createForm(ImportCsvType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $resultat = $importer->import($form->get('fichier')->getData());
+
+            $this->addFlash('success', $resultat['importes'].' participant(s) importé(s)');
+            foreach ($resultat['erreurs'] as $erreur) {
+                $this->addFlash('warning', $erreur);
+            }
+
+            return $this->redirectToRoute('admin_profiles_list');
+        }
+
+        return $this->render('admin/import_csv.html.twig', [
+            'form' => $form,
         ]);
     }
 }

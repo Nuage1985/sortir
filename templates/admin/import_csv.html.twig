@@ -1,0 +1,115 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Importation des Participants | {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <h1 class="text-center text-3xl text-heading font-semibold whitespace-nowrap my-8">Importation des Participants</h1>
+
+    <div class="max-w-xl mx-auto bg-github-dark-gray p-6 rounded-lg border-3 border-github-dark-blue">
+        {# Détail des colonnes #}
+        <p class="mb-4 text-sm text-gray-400 mt-1">
+            Colonnes attendues : </p>
+        <div class="overflow-x-auto mb-6">
+            <table class="w-full text-sm text-left text-gray-300 border border-gray-600 rounded-lg">
+                <thead class="bg-gray-800 text-gray-200">
+                <tr>
+                    <th class="px-3 py-2">Colonne</th>
+                    <th class="px-3 py-2">Obligatoire</th>
+                    <th class="px-3 py-2">Format / règle</th>
+                    <th class="px-3 py-2">Exemple</th>
+                </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-700">
+                <tr>
+                    <td class="px-3 py-2"><code>pseudo</code></td>
+                    <td class="px-3 py-2 text-green-500">Oui</td>
+                    <td class="px-3 py-2">Unique</td>
+                    <td class="px-3 py-2">DavidAug</td>
+                </tr>
+                <tr>
+                    <td class="px-3 py-2"><code>nom</code></td>
+                    <td class="px-3 py-2 text-green-500">Oui</td>
+                    <td class="px-3 py-2">Texte</td>
+                    <td class="px-3 py-2">Auger</td>
+                </tr>
+                <tr>
+                    <td class="px-3 py-2"><code>prenom</code></td>
+                    <td class="px-3 py-2 text-green-500">Oui</td>
+                    <td class="px-3 py-2">Texte</td>
+                    <td class="px-3 py-2">David</td>
+                </tr>
+                <tr>
+                    <td class="px-3 py-2"><code>telephone</code></td>
+                    <td class="px-3 py-2 text-gray-400">Non</td>
+                    <td class="px-3 py-2">20 caractères max, peut rester vide</td>
+                    <td class="px-3 py-2">0612345678</td>
+                </tr>
+                <tr>
+                    <td class="px-3 py-2"><code>mail</code></td>
+                    <td class="px-3 py-2 text-green-500">Oui</td>
+                    <td class="px-3 py-2">Adresse valide, 80 caractères max, <strong>unique</strong> (une adresse déjà en base fait ignorer la ligne)</td>
+                    <td class="px-3 py-2">auger-david@eni.fr</td>
+                </tr>
+                <tr>
+                    <td class="px-3 py-2"><code>password</code></td>
+                    <td class="px-3 py-2 text-green-500">Oui</td>
+                    <td class="px-3 py-2">En clair : il est chiffré automatiquement à l'import</td>
+                    <td class="px-3 py-2">Password123!</td>
+                </tr>
+                <tr>
+                    <td class="px-3 py-2"><code>admin</code></td>
+                    <td class="px-3 py-2 text-green-500">Oui</td>
+                    <td class="px-3 py-2"><code>1</code> = administrateur, <code>0</code> = utilisateur</td>
+                    <td class="px-3 py-2">0</td>
+                </tr>
+                <tr>
+                    <td class="px-3 py-2"><code>actif</code></td>
+                    <td class="px-3 py-2 text-green-500">Oui</td>
+                    <td class="px-3 py-2"><code>1</code> = actif, <code>0</code> = inactif</td>
+                    <td class="px-3 py-2">1</td>
+                </tr>
+                <tr>
+                    <td class="px-3 py-2"><code>campus</code></td>
+                    <td class="px-3 py-2 text-green-500">Oui</td>
+                    <td class="px-3 py-2">Nom <strong>exact</strong> d'un campus existant (accents et majuscules compris)</td>
+                    <td class="px-3 py-2">Quimper</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        {{ form_start(form, {'attr': {
+            'data-controller': 'import',
+            'data-action': 'submit->import#submit'
+        }}) }}
+        <div class="mb-5" data-import-target="upload">
+            {{ form_label(form.fichier, null, {'label_attr': {'class': 'block mb-2.5 text-sm font-medium text-heading'}}) }}
+            {{ form_widget(form.fichier) }}
+            {{ form_errors(form.fichier) }}
+        </div>
+
+        {# Message de transfert caché et affiché par import_controller.js #}
+        <div data-import-target="loader" class="hidden mb-5">
+            <div class="flex items-center p-4 mb-3 text-sm text-red-400 bg-red-900/30 border border-red-800 rounded-lg " role="alert">
+                <svg class="shrink-0 w-4 h-4 me-3" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+                </svg>
+                <span class="font-medium">Importation des Participants en cours, merci de patienter…</span>
+            </div>
+        </div>
+
+
+        <button type="submit" data-import-target="button"
+                class="cursor-pointer text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-500 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none disabled:opacity-50 disabled:cursor-wait">
+            Importer
+        </button>
+        <a class="ml-4 cursor-pointer text-white bg-gray-600 hover:bg-gray-700 focus:ring-4 focus:ring-gray-500 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none inline-block"
+           href="{{ path('admin_profiles_list') }}">
+            Retour
+        </a>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
+
