@@ -1,0 +1,88 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Nouveau profil | {{ parent() }}
+{% endblock %}
+
+
+{% block body %}
+    <h1 class="text-center text-3xl text-heading font-semibold whitespace-nowrap mb-8">Nouveau Profil</h1>
+
+    <div class="max-w-xl mx-auto bg-github-dark-gray p-6 rounded-lg border-3 border-github-dark-blue">
+
+        {{ form_start(profilCreateForm) }}
+
+        <div class="mb-5">
+            {{ form_label(profilCreateForm.campus) }}
+            {{ form_widget(profilCreateForm.campus) }}
+            {{ form_errors(profilCreateForm.campus) }}
+        </div>
+
+        <div class="mb-5">
+            <span class="text-red-500 text-xs mb-0.5">*</span>
+            {{ form_label(profilCreateForm.pseudo, null, {'label_attr': {'class': 'block mb-2.5 text-sm font-medium text-heading'}}) }}
+            {{ form_widget(profilCreateForm.pseudo) }}
+            {{ form_errors(profilCreateForm.pseudo) }}
+        </div>
+
+        <div class="mb-5">
+            <span class="text-red-500 text-xs mb-0.5">*</span>
+            {{ form_label(profilCreateForm.prenom, null, {'label_attr': {'class': 'block mb-2.5 text-sm font-medium text-heading'}}) }}
+            {{ form_widget(profilCreateForm.prenom) }}
+            {{ form_errors(profilCreateForm.prenom) }}
+        </div>
+
+        <div class="mb-5">
+            <span class="text-red-500 text-xs mb-0.5">*</span>
+            {{ form_label(profilCreateForm.nom, null, {'label_attr': {'class': 'block mb-2.5 text-sm font-medium text-heading'}}) }}
+            {{ form_widget(profilCreateForm.nom) }}
+            {{ form_errors(profilCreateForm.nom) }}
+        </div>
+
+        <div class="mb-5">
+            {{ form_label(profilCreateForm.telephone) }}
+            <p class="text-xs text-gray-400 mt-1">Le numéro de téléphone n'est pas obligatoire.</p>
+            {{ form_widget(profilCreateForm.telephone) }}
+            {{ form_errors(profilCreateForm.telephone) }}
+        </div>
+
+        <div class="mb-5">
+            <span class="text-red-500 text-xs mb-0.5">*</span>
+            {{ form_label(profilCreateForm.mail, null, {'label_attr': {'class': 'block mb-2.5 text-sm font-medium text-heading'}}) }}
+            {{ form_widget(profilCreateForm.mail) }}
+            {{ form_errors(profilCreateForm.mail) }}
+        </div>
+
+        <div class="mb-5">
+            {{ form_label(profilCreateForm.password.first) }}
+            {{ form_widget(profilCreateForm.password.first) }}
+            {{ form_errors(profilCreateForm.password.first) }}
+        </div>
+
+        <div class="mb-5">
+            {{ form_label(profilCreateForm.password.second) }}
+            {{ form_widget(profilCreateForm.password.second) }}
+            {{ form_errors(profilCreateForm.password.second) }}
+        </div>
+
+        {{ form_rest(profilCreateForm) }}
+        <p class="mb-4 text-s text-gray-400 mt-1">
+            <span class="text-red-500 text-xs mb-0.5">(*)</span> Les champs
+            marqués d'un astérisque sont obligatoires.
+        </p>
+
+
+        <button type="submit"
+                class="cursor-pointer text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-500 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none">
+            Créer
+        </button>
+
+        <a class="ml-4 cursor-pointer text-white bg-gray-600 hover:bg-gray-700 focus:ring-4 focus:ring-gray-500 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none inline-block"
+           href="{{ path('admin_profiles_list') }}">
+            Retour
+        </a>
+
+        {{ form_end(profilCreateForm) }}
+    </div>
+{% endblock %}
+

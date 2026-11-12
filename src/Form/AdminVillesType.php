@@ -18,12 +18,12 @@ class AdminVillesType extends AbstractType
 
         $builder
             ->add('nom', TextType::class, [
-                'label' => 'Nom de la ville',
+                'label' => 'Nom de la ville : ',
                 'label_attr' => ['class' => $labelAttr],
                 'attr' => ['class' => $inputAttr],
             ])
             ->add('codePostal', TextType::class, [
-                'label' => 'Code postal',
+                'label' => 'Code postal : ',
                 'label_attr' => ['class' => $labelAttr],
                 'attr' => ['class' => $inputAttr],
             ])

@@ -9,11 +9,11 @@ use App\Enum\EtatSortie;
 use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
-class SortieStatusServiceImpl implements SortieStatusService
+readonly class SortieStatusServiceImpl implements SortieStatusService
 {
     public function __construct(
-        private readonly SortieRepository $sortieRepository,
-        private readonly EntityManagerInterface $entityManager
+        private SortieRepository       $sortieRepository,
+        private EntityManagerInterface $entityManager
     ) {}
 
 

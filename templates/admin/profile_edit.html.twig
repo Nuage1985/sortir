@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Modifier le profil {{ participant.pseudo }} | {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <h1 class="text-center text-3xl text-heading font-semibold whitespace-nowrap mb-8">Modifier le Profil {{ participant.prenom }} {{ participant.nom }}</h1>
+
+    <div class="max-w-xl mx-auto bg-github-dark-gray p-6 rounded-lg border-3 border-github-dark-blue">
+
+        {{ form_start(profilEditForm) }}
+
+        <div class="mb-5">
+            {{ form_label(profilEditForm.campus) }}
+            {{ form_widget(profilEditForm.campus) }}
+            {{ form_errors(profilEditForm.campus) }}
+        </div>
+
+        <div class="mb-5">
+            <span class="text-red-500 text-xs mb-0.5">*</span>
+            {{ form_label(profilEditForm.pseudo, null, {'label_attr': {'class': 'block mb-2.5 text-sm font-medium text-heading'}}) }}
+            {{ form_widget(profilEditForm.pseudo) }}
+            {{ form_errors(profilEditForm.pseudo) }}
+        </div>
+
+        <div class="mb-5">
+            <span class="text-red-500 text-xs mb-0.5">*</span>
+            {{ form_label(profilEditForm.prenom, null, {'label_attr': {'class': 'block mb-2.5 text-sm font-medium text-heading'}}) }}
+            {{ form_widget(profilEditForm.prenom) }}
+            {{ form_errors(profilEditForm.prenom) }}
+        </div>
+
+        <div class="mb-5">
+            <span class="text-red-500 text-xs mb-0.5">*</span>
+            {{ form_label(profilEditForm.nom, null, {'label_attr': {'class': 'block mb-2.5 text-sm font-medium text-heading'}}) }}
+            {{ form_widget(profilEditForm.nom) }}
+            {{ form_errors(profilEditForm.nom) }}
+        </div>
+
+        <div class="mb-5">
+            {{ form_label(profilEditForm.telephone) }}
+            <p class="text-xs text-gray-400 mt-1">Le numéro de téléphone n'est pas obligatoire.</p>
+            {{ form_widget(profilEditForm.telephone) }}
+            {{ form_errors(profilEditForm.telephone) }}
+        </div>
+
+        <div class="mb-5">
+            <span class="text-red-500 text-xs mb-0.5">*</span>
+            {{ form_label(profilEditForm.mail, null, {'label_attr': {'class': 'block mb-2.5 text-sm font-medium text-heading'}}) }}
+            {{ form_widget(profilEditForm.mail) }}
+            {{ form_errors(profilEditForm.mail) }}
+        </div>
+
+        <div class="mb-5">
+            {{ form_label(profilEditForm.password.first) }}
+            <p class="text-xs text-gray-400 mt-1">La modification du mot de passe n'est pas obligatoire.</p>
+            {{ form_widget(profilEditForm.password.first) }}
+            {{ form_errors(profilEditForm.password.first) }}
+        </div>
+
+        <div class="mb-5">
+            {{ form_label(profilEditForm.password.second) }}
+            {{ form_widget(profilEditForm.password.second) }}
+            {{ form_errors(profilEditForm.password.second) }}
+        </div>
+
+        <div class="mb-5 flex items-center gap-2">
+            {{ form_widget(profilEditForm.actif) }}
+            {{ form_label(profilEditForm.actif) }}
+            <p class="text-xs font-medium text-orange-500 hover:underline ml-4">Un profil marqué comme non-actif sera désactivé</p>
+        </div>
+
+        <p class="mb-4 text-s text-gray-400 mt-1">
+            <span class="text-red-500 text-xs mb-0.5">(*)</span> Les champs
+            marqués d'un astérisque sont obligatoires.
+        </p>
+
+        <button type="submit"
+                class="cursor-pointer text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-500 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none">
+            Modifier
+        </button>
+
+        <a class="ml-4 cursor-pointer text-white bg-gray-600 hover:bg-gray-700 focus:ring-4 focus:ring-gray-500 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none inline-block"
+           href="{{ path('admin_profiles_list') }}">
+            Retour
+        </a>
+
+        {{ form_end(profilEditForm) }}
+    </div>
+{% endblock %}

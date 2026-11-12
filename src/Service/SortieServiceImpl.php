@@ -3,7 +3,6 @@
 namespace App\Service;
 
 use App\Entity\Campus;
-use App\Entity\Lieu;
 use App\Entity\Participant;
 use App\Entity\Sortie;
 use App\Enum\EtatSortie;
