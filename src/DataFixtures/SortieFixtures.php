@@ -6,7 +6,6 @@ use App\Entity\Campus;
 use App\Entity\Lieu;
 use App\Entity\Participant;
 use App\Entity\Sortie;
-use App\Entity\Ville;
 use App\Enum\EtatSortie;
 use App\Service\SortieStatusService;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -41,20 +40,20 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
     {
         //Paramètres de génération des fixtures
 
-        /*Date Mini : date a partir de laquelle les sorties sont créé.
-         * Si la date est antérieur a aujourd'hui, des sorties Terminées seront créé
-         * Si la date est antérieur de 1 mois a aujourd'hui, des sorties Historisée seront créé
-         * Date Maxi : date jusqu'a laquelle les sorties sont créé.
+        /*Date Mini : date à partir de laquelle les sorties sont créé.
+         * Si la date est antérieur à aujourd'hui, des sorties Terminées seront créé
+         * Si la date est antérieur d'un mois à aujourd'hui, des sorties Historisée seront créé
+         * Date Maxi : date jusqu'à laquelle les sorties sont créé.
          */
         $dateMini = new \DateTime('-2 months');
         $dateMaxi = new \DateTime('+2 months');
         $nbSortie = 100;
-        $nbSortieParLieu = 2;   // un lieu accueille au plus N sorties (à des dates différentes)
+        $nbSortieParLieu = 2;   // un lieu accueille au plus N sortie(s) (à des dates différentes)
         $tauxBrouillon = 10;    // % de sorties "En création" (uniquement dans le futur)
-        $tauxAnnulation = 5;    // % de sorties "Annulée"     (uniquement dans le futur)
+        $tauxAnnulation = 5;    // % de sorties "Annulée" (uniquement dans le futur)
 
         //il peut y avoir plusieurs sorties dans un même lieu a des dates différentes
-        //quand une sortie est rattachée a un campus, le lieu y est rataché également
+        //quand une sortie est rattachée à un campus, le lieu y est rataché également
         //il n'y a que les participants d'un campus qui peuvent s'inscrire a la sortie du même campus.
 
         $faker = \Faker\Factory::create('fr_FR');
@@ -96,7 +95,7 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
                 continue;
             }
 
-            //pour chaque lieu on crée une réservation (futur sortie)
+            //pour chaque lieu, on crée une réservation (future sortie).
             foreach ($lieux as $lieu) {
                 for ($k = 0; $k < $nbSortieParLieu; $k++) {
                     $reserve[] = [$campus, $lieu, $participants];

@@ -10,7 +10,7 @@ use Doctrine\Persistence\ObjectManager;
 class LieuFixtures extends Fixture
 {
     /**
-     * 10 lieux réels par campus.
+     * Dix lieux réels par campus.
      * [nom, rue, code postal, ville, latitude, longitude]
      * Coordonnées approximatives (précision ~100 m), suffisantes pour une carte de démo.
      */
