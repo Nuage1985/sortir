@@ -46,6 +46,8 @@ final class ProfileController extends AbstractController
                 $participant->setPassword($hashed);
             }
 
+            // Image de profil
+            $ancien = null;
             $imageFile = $profilForm->get('image')->getData();
             if ($imageFile) {
                 $ancien = $participant->getFilename();
@@ -55,7 +57,7 @@ final class ProfileController extends AbstractController
             $entityManager->persist($participant);
             $entityManager->flush();
 
-            //on supprime l'ancien fichier une fois sur qu'il est remplacé
+            // On supprime l'ancien fichier, si l'utilisateur l'a changé.
             if ($ancien) {
                 $fileUploader->remove($ancien);
             }
