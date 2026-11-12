@@ -72,6 +72,76 @@
         </table>
     </div>
 
+    {# Pagination #}
+    {% if totalPages > 1 %}
+        {% set queryParams %}
+            {% if nom %}&nom={{ nom }}{% endif %}
+        {% endset %}
+
+        <nav class="flex items-center justify-center gap-1 mt-6" aria-label="Pagination">
+            {# Bouton Précédent (caché sur mobile) #}
+            {% if currentPage > 1 %}
+                <a href="{{ path('admin_campus_list') }}?page={{ currentPage - 1 }}{{ queryParams }}"
+                   class="hidden rounded-lg border border-gray-600 bg-github-dark-gray p-2 text-gray-400 hover:bg-gray-700 hover:text-white sm:flex">
+                    <span class="sr-only">Précédent</span>
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                              d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                              clip-rule="evenodd"></path>
+                    </svg>
+                </a>
+            {% else %}
+                <span
+                    class="hidden rounded-lg border border-gray-600 bg-github-dark-gray p-2 text-gray-600 cursor-not-allowed sm:flex">
+                    <span class="sr-only">Précédent</span>
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                              d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                              clip-rule="evenodd"></path>
+                    </svg>
+                </span>
+            {% endif %}
+
+            {# Numéros de page #}
+            {% for i in 1..totalPages %}
+                {% if i == currentPage %}
+                    <span
+                        class="rounded-lg border border-blue-500 bg-blue-600 px-4 py-2 text-sm font-medium text-white">
+                        {{ i }}
+                    </span>
+                {% else %}
+                    <a href="{{ path('admin_campus_list') }}?page={{ i }}{{ queryParams }}"
+                       class="rounded-lg border border-gray-600 bg-github-dark-gray px-4 py-2 text-sm font-medium text-gray-400 hover:bg-gray-700 hover:text-white">
+                        {{ i }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+
+            {# Bouton Suivant (caché sur mobile) #}
+            {% if currentPage < totalPages %}
+                <a href="{{ path('admin_campus_list') }}?page={{ currentPage + 1 }}{{ queryParams }}"
+                   class="hidden rounded-lg border border-gray-600 bg-github-dark-gray p-2 text-gray-400 hover:bg-gray-700 hover:text-white sm:flex">
+                    <span class="sr-only">Suivant</span>
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                              clip-rule="evenodd"></path>
+                    </svg>
+                </a>
+            {% else %}
+                <span
+                    class="hidden rounded-lg border border-gray-600 bg-github-dark-gray p-2 text-gray-600 cursor-not-allowed sm:flex">
+                    <span class="sr-only">Suivant</span>
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                              clip-rule="evenodd"></path>
+                    </svg>
+                </span>
+            {% endif %}
+        </nav>
+    {% endif %}
+
     {# Retour à la page d'administration #}
     <div class="mt-8 flex flex-col items-center sm:flex-row sm:justify-center">
         <a href="{{ path('admin_dashboard') }}"

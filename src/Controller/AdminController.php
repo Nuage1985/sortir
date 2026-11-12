@@ -44,12 +44,18 @@ final class AdminController extends AbstractController
     {
         // Filtre, recherche par nom
         $nom = trim((string)$request->query->get('nom', ''));
+        $page = max(1, (int)$request->query->get('page', 1));
 
-        if ($nom !== '') {
-            $villes = $this->villeRepository->findByNom($nom);
-        } else {
-            $villes = $this->villeRepository->findAll();
-        }
+        // Nombre de résultats par page
+        $limit = 10;
+        $offset = ($page - 1) * $limit;
+
+        // Récupérer les villes filtrées avec pagination
+        $villes = $this->villeRepository->findFiltered($nom, $limit, $offset);
+
+        // Compter le nombre total de résultats pour la pagination
+        $total = $this->villeRepository->countFiltered($nom);
+        $totalPages = max(1, (int)ceil($total / $limit));
 
         // Créer une nouvelle ville
         $ville = new Ville();
@@ -81,6 +87,8 @@ final class AdminController extends AbstractController
                 array_map(fn($v) => $v->getId(), $villes),
                 fn($id) => $this->villeRepository->hasLieuUsedInSortie($id)
             ),
+            'totalPages' => $totalPages,
+            'currentPage' => $page,
         ]);
     }
 
@@ -140,12 +148,18 @@ final class AdminController extends AbstractController
     {
         // Filtre, recherche par nom
         $nom = trim((string)$request->query->get('nom', ''));
+        $page = max(1, (int)$request->query->get('page', 1));
 
-        if ($nom !== '') {
-            $campuses = $this->campusRepository->findByNom($nom);
-        } else {
-            $campuses = $this->campusRepository->findAll();
-        }
+        // Nombre de résultats par page
+        $limit = 10;
+        $offset = ($page - 1) * $limit;
+
+        // Récupérer les campus filtrés avec pagination
+        $campuses = $this->campusRepository->findFiltered($nom, $limit, $offset);
+
+        // Compter le nombre total de résultats pour la pagination
+        $total = $this->campusRepository->countFiltered($nom);
+        $totalPages = max(1, (int)ceil($total / $limit));
 
         // Créer une nouvelle ville
         $campus = new Campus();
@@ -178,6 +192,8 @@ final class AdminController extends AbstractController
                 array_map(fn($c) => $c->getId(), $campuses),
                 fn($id) => $this->campusRepository->hasCampusUsedInSortie($id)
             ),
+            'totalPages' => $totalPages,
+            'currentPage' => $page,
         ]);
     }
 

@@ -26,6 +26,46 @@ class CampusRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * Construit le QueryBuilder commun avec les filtres appliqués.
+     */
+    private function createFilteredQueryBuilder(string $nom): \Doctrine\ORM\QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('c');
+
+        if ($nom !== '') {
+            $qb->andWhere('c.nom LIKE :nom')
+                ->setParameter('nom', '%' . $nom . '%');
+        }
+
+        $qb->orderBy('c.nom', 'ASC');
+
+        return $qb;
+    }
+
+    /**
+     * Récupère le nombre total de campus correspondant aux filtres.
+     */
+    public function countFiltered(string $nom): int
+    {
+        $qb = $this->createFilteredQueryBuilder($nom)
+            ->select('COUNT(c.id)');
+
+        return (int)$qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @return Campus[]
+     */
+    public function findFiltered(string $nom, int $limit = 10, int $offset = 0): array
+    {
+        $qb = $this->createFilteredQueryBuilder($nom)
+            ->setMaxResults($limit)
+            ->setFirstResult($offset);
+
+        return $qb->getQuery()->getResult();
+    }
+
     public function hasCampusUsedInSortie(int $campusId): bool
     {
         $count = $this->createQueryBuilder('c')

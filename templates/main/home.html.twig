@@ -44,7 +44,7 @@
     {# Si l'utilisateur est connecté #}
     {% if is_granted('ROLE_USER') %}
 
-        {# Affichage des infos utilisateur + date et espace pour les flash messages #}
+        {# Affichage des infos utilisateur + date et espace pour les messages flash #}
         <div class="flex flex-wrap items-center justify-between gap-4 m-4">
             <div>
                 {% for label, messages in app.flashes %}
@@ -152,65 +152,66 @@
                     {% set estOrganisateur = sortie.organisateur == app.user %}
                     {% set estInscrit = sortie.participants.contains(app.user) %}
                     {% if sortie.etat.value not in ['Historise', 'Historisee'] and sortie.etat.libelle != 'Historisée' %}
-                    <tr class="border-b border-gray-600 odd:bg-github-dark-gray even:bg-gray-800">
-                        <th scope="row" class="px-6 py-4 font-medium text-heading whitespace-nowrap">
-                            {{ sortie.nom }}
-                        </th>
-                        <td class="px-6 py-4">{{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</td>
-                        <td class="px-6 py-4">
-                            {{ sortie.dateLimiteInscription ? sortie.dateLimiteInscription|date('d/m/Y') : '-' }}
-                        </td>
-                        <td class="px-6 py-4">{{ sortie.participants|length }} / {{ sortie.nbInscriptionMax }}</td>
-                        <td class="px-6 py-4">{{ sortie.etat.libelle }}</td>
-                        <td class="px-6 py-4">{{ estInscrit ? 'X' : '' }}</td>
-                        <td class="px-6 py-4">
-                            <a href="{{ path('profile_details', { id: sortie.organisateur.id }) }}"
-                               class="font-medium text-blue-500 hover:underline">
-                                {{ sortie.organisateur.prenom }} {{ sortie.organisateur.nom }}
-                            </a>
-                        </td>
-                        <td class="px-6 py-4">
-                            <a href="{{ path('sortie_detail', { id: sortie.id }) }}"
-                               class="font-medium text-blue-500 hover:underline">Afficher</a>
-                            {% if estOrganisateur and sortie.etat.value == 'EnCreation' %}
-                                <br><a href="{{ path('sortie_edit', {id: sortie.id}) }}"
-                                       class="font-medium text-blue-500 hover:underline">Modifier</a>
-                                <form method="post" action="{{ path('publier_sortie', { id: sortie.id }) }}">
-                                    <input type="hidden" name="_token"
-                                           value="{{ csrf_token('publish_sortie_' ~ sortie.id) }}">
-                                    <button type="submit" class="font-medium text-blue-500 hover:underline">Publier
-                                    </button>
-                                </form>
-                            {% endif %}
+                        <tr class="border-b border-gray-600 odd:bg-github-dark-gray even:bg-gray-800">
+                            <th scope="row" class="px-6 py-4 font-medium text-heading whitespace-nowrap">
+                                {{ sortie.nom }}
+                            </th>
+                            <td class="px-6 py-4">{{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</td>
+                            <td class="px-6 py-4">
+                                {{ sortie.dateLimiteInscription ? sortie.dateLimiteInscription|date('d/m/Y') : '-' }}
+                            </td>
+                            <td class="px-6 py-4">{{ sortie.participants|length }} / {{ sortie.nbInscriptionMax }}</td>
+                            <td class="px-6 py-4">{{ sortie.etat.libelle }}</td>
+                            <td class="px-6 py-4">{{ estInscrit ? 'X' : '' }}</td>
+                            <td class="px-6 py-4">
+                                <a href="{{ path('profile_details', { id: sortie.organisateur.id }) }}"
+                                   class="font-medium text-blue-500 hover:underline">
+                                    {{ sortie.organisateur.prenom }} {{ sortie.organisateur.nom }}
+                                </a>
+                            </td>
+                            <td class="px-6 py-4">
+                                <a href="{{ path('sortie_detail', { id: sortie.id }) }}"
+                                   class="font-medium text-blue-500 hover:underline">Afficher</a>
+                                {% if estOrganisateur and sortie.etat.value == 'EnCreation' %}
+                                    <br><a href="{{ path('sortie_edit', {id: sortie.id}) }}"
+                                           class="font-medium text-blue-500 hover:underline">Modifier</a>
+                                    <form method="post" action="{{ path('publier_sortie', { id: sortie.id }) }}">
+                                        <input type="hidden" name="_token"
+                                               value="{{ csrf_token('publish_sortie_' ~ sortie.id) }}">
+                                        <button type="submit" class="font-medium text-blue-500 hover:underline">Publier
+                                        </button>
+                                    </form>
+                                {% endif %}
 
-                            {% if sortie.etat.value == 'Ouverte' and not estInscrit and sortie.participants|length < sortie.nbInscriptionMax and (sortie.dateLimiteInscription is null or sortie.dateLimiteInscription > date()) %}
-                                <br>
-                                <form method="post" action="{{ path('sortie_inscrire', { id: sortie.id }) }}">
-                                    <input type="hidden" name="_token"
-                                           value="{{ csrf_token('inscrire_sortie_' ~ sortie.id) }}">
-                                    <button type="submit" class="font-medium text-blue-500 hover:underline">S'inscrire
-                                    </button>
-                                </form>
-                            {% endif %}
+                                {% if sortie.etat.value == 'Ouverte' and not estInscrit and sortie.participants|length < sortie.nbInscriptionMax and (sortie.dateLimiteInscription is null or sortie.dateLimiteInscription > date()) %}
+                                    <br>
+                                    <form method="post" action="{{ path('sortie_inscrire', { id: sortie.id }) }}">
+                                        <input type="hidden" name="_token"
+                                               value="{{ csrf_token('inscrire_sortie_' ~ sortie.id) }}">
+                                        <button type="submit" class="font-medium text-blue-500 hover:underline">
+                                            S'inscrire
+                                        </button>
+                                    </form>
+                                {% endif %}
 
-                            {% if estOrganisateur and sortie.etat.value == 'Ouverte' %}
-                                <br><a href="{{ path('sortie_annuler', { id: sortie.id}) }}"
-                                       class="font-medium text-orange-500 hover:underline">Annuler</a>
-                            {% endif %}
+                                {% if estOrganisateur and sortie.etat.value == 'Ouverte' %}
+                                    <br><a href="{{ path('sortie_annuler', { id: sortie.id}) }}"
+                                           class="font-medium text-orange-500 hover:underline">Annuler</a>
+                                {% endif %}
 
-                            {% if estInscrit and sortie.etat.value == 'Ouverte' %}
-                                <br>
-                                <form method="post" action="{{ path('sortie_desister', { id: sortie.id }) }}">
-                                    <input type="hidden" name="_token"
-                                           value="{{ csrf_token('desister_sortie_' ~ sortie.id) }}">
-                                    <button type="submit" class="font-medium text-blue-500 hover:underline">Se
-                                        désister
-                                    </button>
-                                </form>
-                            {% endif %}
+                                {% if estInscrit and sortie.etat.value == 'Ouverte' %}
+                                    <br>
+                                    <form method="post" action="{{ path('sortie_desister', { id: sortie.id }) }}">
+                                        <input type="hidden" name="_token"
+                                               value="{{ csrf_token('desister_sortie_' ~ sortie.id) }}">
+                                        <button type="submit" class="font-medium text-blue-500 hover:underline">Se
+                                            désister
+                                        </button>
+                                    </form>
+                                {% endif %}
 
-                        </td>
-                    </tr>
+                            </td>
+                        </tr>
                     {% endif %}
                 {% else %}
                     <tr>
@@ -220,6 +221,83 @@
                 </tbody>
             </table>
         </div>
+
+        {# Pagination #}
+        {% if totalPages > 1 %}
+            {% set queryParams %}
+                {% if campusSelectionne is defined and campusSelectionne is not null %}&campusId={{ campusSelectionne.id }}{% endif %}
+                {% if filtres.nom %}&nom={{ filtres.nom }}{% endif %}
+                {% if filtres.dateDebut %}&dateDebut={{ filtres.dateDebut }}{% endif %}
+                {% if filtres.dateFin %}&dateFin={{ filtres.dateFin }}{% endif %}
+                {% if filtres.organisateur %}&organisateur=1{% endif %}
+                {% if filtres.inscrit %}&inscrit=1{% endif %}
+                {% if filtres.etat %}&terminees=1{% endif %}
+            {% endset %}
+
+            <nav class="flex items-center justify-center gap-1 mt-6" aria-label="Pagination">
+                {# Bouton Précédent (caché sur mobile) #}
+                {% if currentPage > 1 %}
+                    <a href="{{ path('liste') }}?page={{ currentPage - 1 }}{{ queryParams }}"
+                       class="hidden rounded-lg border border-gray-600 bg-github-dark-gray p-2 text-gray-400 hover:bg-gray-700 hover:text-white sm:flex">
+                        <span class="sr-only">Précédent</span>
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                  d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                                  clip-rule="evenodd"></path>
+                        </svg>
+                    </a>
+                {% else %}
+                    <span
+                        class="hidden rounded-lg border border-gray-600 bg-github-dark-gray p-2 text-gray-600 cursor-not-allowed sm:flex">
+                        <span class="sr-only">Précédent</span>
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                  d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                                  clip-rule="evenodd"></path>
+                        </svg>
+                    </span>
+                {% endif %}
+
+                {# Numéros de page #}
+                {% for i in 1..totalPages %}
+                    {% if i == currentPage %}
+                        <span
+                            class="rounded-lg border border-blue-500 bg-blue-600 px-4 py-2 text-sm font-medium text-white">
+                            {{ i }}
+                        </span>
+                    {% else %}
+                        <a href="{{ path('liste') }}?page={{ i }}{{ queryParams }}"
+                           class="rounded-lg border border-gray-600 bg-github-dark-gray px-4 py-2 text-sm font-medium text-gray-400 hover:bg-gray-700 hover:text-white">
+                            {{ i }}
+                        </a>
+                    {% endif %}
+                {% endfor %}
+
+                {# Bouton Suivant (caché sur mobile) #}
+                {% if currentPage < totalPages %}
+                    <a href="{{ path('liste') }}?page={{ currentPage + 1 }}{{ queryParams }}"
+                       class="hidden rounded-lg border border-gray-600 bg-github-dark-gray p-2 text-gray-400 hover:bg-gray-700 hover:text-white sm:flex">
+                        <span class="sr-only">Suivant</span>
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                  clip-rule="evenodd"></path>
+                        </svg>
+                    </a>
+                {% else %}
+                    <span
+                        class="hidden rounded-lg border border-gray-600 bg-github-dark-gray p-2 text-gray-600 cursor-not-allowed sm:flex">
+                        <span class="sr-only">Suivant</span>
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                  clip-rule="evenodd"></path>
+                        </svg>
+                    </span>
+                {% endif %}
+            </nav>
+        {% endif %}
+
         <div class="mt-4">
             <a href="{{ path('sortie_creer') }}"
                class="inline-block text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-500 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none">
