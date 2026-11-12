@@ -87,6 +87,14 @@
             </div>
         </div>
 
+        {# Lien vers formulaire de création d'une sortie #}
+        <div class="mb-4">
+            <a href="{{ path('sortie_creer') }}"
+               class="inline-block text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-500 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none">
+                Créer une sortie
+            </a>
+        </div>
+
         {# Filtres liste des sorties #}
         <form method="get" action="{{ path('liste') }}"
               class="mb-6 flex flex-wrap items-center gap-3 rounded-lg border border-gray-600 bg-github-dark-gray p-4 text-heading">
@@ -297,13 +305,6 @@
                 {% endif %}
             </nav>
         {% endif %}
-
-        <div class="mt-4">
-            <a href="{{ path('sortie_creer') }}"
-               class="inline-block text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-500 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none">
-                Créer une sortie
-            </a>
-        </div>
 
         <script>
             (() => {
