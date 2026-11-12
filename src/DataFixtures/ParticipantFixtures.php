@@ -4,14 +4,20 @@ namespace App\DataFixtures;
 
 use App\Entity\Campus;
 use App\Entity\Participant;
+use App\Service\FileUploaderService;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\String\Slugger\AsciiSlugger;
+
 
 class ParticipantFixtures extends Fixture implements DependentFixtureInterface
 {
-    public function __construct(private readonly UserPasswordHasherInterface $passwordHasher)
+    public function __construct(
+        private readonly UserPasswordHasherInterface $passwordHasher,
+        private readonly FileUploaderService         $fileUploaderService)
     {
     }
 
@@ -22,75 +28,121 @@ class ParticipantFixtures extends Fixture implements DependentFixtureInterface
         ];
     }
 
-    public function load(ObjectManager $manager): void
+    public function load(ObjectManager $manager,): void
     {
-        // Profils de départ pour le dév
-        $user = new Participant();
-        $user->setPseudo('MarieD_44')
-            ->setNom('Dupont')
-            ->setPrenom('Marie')
-            ->setMail('marie@eni.fr')
-            ->setAdmin(false)
-            ->setActif(true)
-            ->setCampus($this->getReference('campus-rennes', Campus::class));
-        $user->setPassword($this->passwordHasher->hashPassword($user, 'password'));
-        $manager->persist($user);
-        $this->addReference('participant-marie', $user);
-
-        $admin = new Participant();
-        $admin->setPseudo('CoachAdmin')
-            ->setNom('Martin')
-            ->setPrenom('Paul')
-            ->setMail('admin@eni.fr')
-            ->setAdmin(true)
-            ->setActif(true)
-            ->setCampus($this->getReference('campus-nantes', Campus::class));
-        $admin->setPassword($this->passwordHasher->hashPassword($admin, 'password'));
-        $manager->persist($admin);
-        $this->addReference('participant-paul', $admin);
-
-        // Profil suspendu, pour test (isActive === false)
-        $suspendedUser = new Participant();
-        $suspendedUser->setPseudo('Troll_lolol')
-            ->setNom('Toxic')
-            ->setPrenom('Jean-Michel')
-            ->setMail('troll@eni.fr')
-            ->setAdmin(false)
-            ->setActif(false)
-            ->setCampus($this->getReference('campus-nantes', Campus::class));
-        $suspendedUser->setPassword($this->passwordHasher->hashPassword($suspendedUser, 'password'));
-        $manager->persist($suspendedUser);
-        $this->addReference('participant-suspended', $suspendedUser);
-
-        // Profils avec faker, 10 participants par campus.
+        $slugger = new AsciiSlugger();
         $faker = \Faker\Factory::create('fr_FR');
 
-        $campusReferences = [
-            'campus-rennes',
-            'campus-nantes',
-            'campus-quimper',
-            'campus-marseille',
-            'campus-paris',
-            'campus-point-a-pitre',
-        ];
+        //Paramètres de génération des fixtures
+        $nbParticipantParCampus = 10;
+        $nbAdminTotal = 2;
+        $nbParticipantInactifTotal = 5;
 
-        foreach ($campusReferences as $campusRef) {
-            for ($i = 0; $i < 10; $i++) {
+        $mailsUtilises = [];
+        $hash = null;
+        $n = 0; // compteur global des participants
+
+        //Récupération des Campus
+        $campusList = $manager->getRepository(Campus::class)->findAll();
+        foreach ($campusList as $campus) {
+            for ($i = 0; $i < $nbParticipantParCampus; $i++, $n++) {
                 $participant = new Participant();
                 $participant
-                    ->setPseudo($faker->unique()->userName())
                     ->setNom($faker->lastName())
                     ->setPrenom($faker->firstName())
-                    ->setMail($faker->unique()->safeEmail())
+                    ->setPseudo($participant->getPrenom() . mb_substr($participant->getNom(), 0, 3))
                     ->setTelephone($faker->optional(0.5)->numerify('0#########'))
-                    ->setAdmin(false)
-                    ->setActif(true)
-                    ->setCampus($this->getReference($campusRef, Campus::class));
-                $participant->setPassword($this->passwordHasher->hashPassword($participant, 'password'));
+                    ->setCampus($campus);
+
+                //Si c'est le premier participant
+                if ($n === 0) {
+                    $mail = 'user@eni.fr';
+                    $admin = false;
+                    $actif = true;
+
+                    //Si il reste des admin a distribuer
+                } elseif ($n <= $nbAdminTotal) {
+                    $mail = $this->createMail('admin', $n);
+                    $admin = true;
+                    $actif = true;
+
+                    //Si il reste des participant inactif à distribuer
+                } elseif ($n <= $nbAdminTotal + $nbParticipantInactifTotal) {
+                    $mail = $this->createMail('inactif', $n - $nbAdminTotal);
+                    $admin = false;
+                    $actif = false;
+                } else {
+
+                    //Sinon on crée un participant non admin et actif
+                    $mail = $slugger->slug($participant->getNom() . '-' . $participant->getPrenom())->lower() . '@eni.fr';
+                    $admin = false;
+                    $actif = true;
+                }
+
+                //On vérifie si le mail issue du couple prenom-nom n'est pas déjà dans le tableau des mails utilisé.
+                if (isset($mailsUtilises[$mail])) {
+                    $mail = str_replace('@', '-' . $n . '@', $mail);
+                }
+                //on stock le mail comme utilisé
+                $mailsUtilises[$mail] = true;
+
+                $participant
+                    ->setMail($mail)
+                    ->setAdmin($admin)
+                    ->setActif($actif);
+
+                // le hachage est lent : on le calcule une seule fois et on le réutilise
+                $hash ??= $this->passwordHasher->hashPassword($participant, 'password');
+                $participant->setPassword($hash);
+
+                //ajout de l'avatar
+                $uploadedFile = $this->createAvatar($participant->getPseudo(), 'toon-head', 180);
+                $newFilename = $this->fileUploaderService->upload($uploadedFile);
+                $participant->setFilename($newFilename);
+
                 $manager->persist($participant);
+                $this->addReference('participant-' . $n, $participant);
             }
         }
 
         $manager->flush();
+    }
+
+    function createMail(string $prefixe, int $k): string
+    {
+        if ($k > 1) {
+            return $prefixe . $k . '@eni.fr';
+        }
+
+        return $prefixe . '@eni.fr';
+    }
+
+    private function createAvatar(?string $seed = null, string $style = 'adventurer-neutral', int $size = 200): UploadedFile
+    {
+        //style : avataaars-neutral, toon-head
+        $uniqueSeed = $seed ?? uniqid();
+        $url = sprintf(
+            'https://api.dicebear.com/9.x/%s/png?seed=%s&size=%d',
+            $style,
+            urlencode($uniqueSeed),
+            $size
+        );
+
+        $content = @file_get_contents($url);
+        if ($content === false) {
+            throw new \RuntimeException('Impossible de télécharger l\'avatar : ' . $url);
+        }
+
+        // enregistrement dans un fichier temporaire
+        $tmp = tempnam(sys_get_temp_dir(), 'fixture_');
+        file_put_contents($tmp, $content);
+
+        return new UploadedFile(
+            $tmp,
+            'avatar.png',
+            'image/png',
+            null,
+            true // mode test, indispensable : sinon move() refuse le fichier
+        );
     }
 }
