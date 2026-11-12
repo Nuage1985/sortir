@@ -26,7 +26,7 @@ readonly class SortieServiceImpl implements SortieService
         return $participant->getCampus();
     }
 
-    public function getSortiesFiltered(Participant $participant, FiltreSortieDTO $filtres, ?Campus $campus = null): array
+    public function getSortiesFiltered(Participant $participant, FiltreSortieDTO $filtres, ?Campus $campus = null, int $limit = 10, int $offset = 0): array
     {
         //Rappel : === est un opérateur strict, meme valeur, même type
         if ($campus === null) {
@@ -37,7 +37,20 @@ readonly class SortieServiceImpl implements SortieService
             return []; //La requête attend un objet Campus non null, donc on lui retourne une valeur vide pour éviter l'erreur
         }
 
-        return $this->sortieRepository->findFilteredSortiesByParticipant($campus, $participant, $filtres);
+        return $this->sortieRepository->findFilteredSortiesByParticipant($campus, $participant, $filtres, $limit, $offset);
+    }
+
+    public function countSortiesFiltered(Participant $participant, FiltreSortieDTO $filtres, ?Campus $campus = null): int
+    {
+        if ($campus === null) {
+            $campus = $this->getCampusByDefault($participant);
+        }
+
+        if ($campus === null) {
+            return 0;
+        }
+
+        return $this->sortieRepository->countFilteredSortiesByParticipant($campus, $participant, $filtres);
     }
     public function isVisibleForParticipant(Sortie $sortie, Participant $participant): bool
     {

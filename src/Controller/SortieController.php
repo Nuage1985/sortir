@@ -43,6 +43,11 @@ class SortieController extends AbstractController
             $campus = $this->campusRepository->find((int)$campusId);
         }
 
+        // Pagination
+        $page = max(1, (int)$request->query->get('page', 1));
+        $limit = 10;
+        $offset = ($page - 1) * $limit;
+
         // Récupération des filtres du formulaire (valeurs interprétées par le service)
         $q = $request->query;
         $filtres = new FiltreSortieDTO(
@@ -54,7 +59,11 @@ class SortieController extends AbstractController
             etat:         $q->getBoolean('terminees') ? EtatSortie::Terminee : null,
         );
 
-        $sorties = $this->sortieService->getSortiesFiltered($participant, $filtres, $campus);
+        $sorties = $this->sortieService->getSortiesFiltered($participant, $filtres, $campus, $limit, $offset);
+
+        // Compter le nombre total de résultats pour la pagination
+        $total = $this->sortieService->countSortiesFiltered($participant, $filtres, $campus);
+        $totalPages = max(1, (int)ceil($total / $limit));
 
         return $this->render('main/home.html.twig', [
             'sorties' => $sorties,
@@ -63,6 +72,8 @@ class SortieController extends AbstractController
             //On affiche le campus par défaut
             'campusSelectionne' => $campus ?? $this->sortieService->getCampusByDefault($participant),
             'filtres' => $filtres,
+            'totalPages' => $totalPages,
+            'currentPage' => $page,
         ]);
 
     }

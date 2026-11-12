@@ -22,22 +22,25 @@ class SortieRepository extends ServiceEntityRepository
     }
 
     /**
-     * Liste toutes les sorties d'un campus suivant un filtre
-     * Le participant en paramètre est obligatoire afin d'afficher ses sorties en création si il est organisateur
+     * Construit le QueryBuilder commun avec les filtres appliqués.
+     * Utilisé à la fois pour le comptage et la récupération des résultats.
      */
-    public function findFilteredSortiesByParticipant(Campus $campus, Participant $participant, FiltreSortieDTO $filtres): array
-    {
+    private function createFilteredQueryBuilder(
+        Campus $campus,
+        Participant $participant,
+        FiltreSortieDTO $filtres
+    ): QueryBuilder {
 
         $qb = $this->createQueryBuilder('s')
-            ->addSelect('o', 'p')
-            ->leftJoin('s.organisateur', 'o')
-            ->leftJoin('s.participants', 'p')
             ->andWhere('s.campus = :campus')
             ->andWhere('s.etat != :enCreation OR s.organisateur = :participant')
+            ->andWhere('s.etat != :historisee')
             ->setParameter('campus', $campus)
             ->setParameter('enCreation', EtatSortie::EnCreation)
             ->setParameter('participant', $participant)
-            ->orderBy('s.dateHeureDebut', 'ASC');
+            ->setParameter('historisee', EtatSortie::Historisee)
+            ->orderBy('s.dateHeureDebut', 'ASC')
+            ->addOrderBy('s.id', 'ASC');
 
         $this->filterByState($qb, $filtres->etat);
         $this->filterByPeriod($qb, $filtres->getDateDebut(), $filtres->getDateFin());
@@ -54,13 +57,48 @@ class SortieRepository extends ServiceEntityRepository
         if ($filtres->inscrit) {
             $qb->andWhere(':participant MEMBER OF s.participants');
         }
+
+        return $qb;
+    }
+
+    /**
+     * Récupère le nombre total de sorties correspondant aux filtres.
+     */
+    public function countFilteredSortiesByParticipant(
+        Campus $campus,
+        Participant $participant,
+        FiltreSortieDTO $filtres
+    ): int {
+        $qb = $this->createFilteredQueryBuilder($campus, $participant, $filtres)
+            ->select('COUNT(s.id)');
+
+        return (int)$qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * Liste toutes les sorties d'un campus suivant un filtre avec pagination
+     * Le participant en paramètre est obligatoire afin d'afficher ses sorties en création si il est organisateur
+     *
+     * @return Sortie[]
+     */
+    public function findFilteredSortiesByParticipant(
+        Campus $campus,
+        Participant $participant,
+        FiltreSortieDTO $filtres,
+        int $limit = 10,
+        int $offset = 0
+    ): array {
+        $qb = $this->createFilteredQueryBuilder($campus, $participant, $filtres)
+            ->setMaxResults($limit)
+            ->setFirstResult($offset);
+
         return $qb->getQuery()->getResult();
     }
 
     /**
      * Liste les sorties disponibles d'un Campus suivant une date et un Etat
-     * Etats autorisé : Ouverte, Cloturé, Annulée, Historisée
-     * Etats interdits : En cours, Terminée
+     * États autorisé : Ouverte, Cloturé, Annulée, Historisée
+     * États interdits : En cours, Terminée
      */
 
     public function findFilteredSorties(Campus $campus, ?EtatSortie $etat = null, ?\DateTimeImmutable $date = null): array
@@ -84,7 +122,7 @@ class SortieRepository extends ServiceEntityRepository
     }
 
     /**
-     * Fonctions communes au deux requetes
+     * Fonctions communes au deux requêtes
      */
 
     private function filterByState(QueryBuilder $qb, ?EtatSortie $etat): void

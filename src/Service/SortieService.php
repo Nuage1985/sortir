@@ -17,7 +17,15 @@ interface SortieService
         Participant $participant,
         FiltreSortieDTO $filtres,
         ?Campus $campus = null,
+        int $limit = 10,
+        int $offset = 0,
     ): array;
+
+    public function countSortiesFiltered(
+        Participant $participant,
+        FiltreSortieDTO $filtres,
+        ?Campus $campus = null,
+    ): int;
 
     public function isVisibleForParticipant(Sortie $sortie, Participant $participant): bool;
 

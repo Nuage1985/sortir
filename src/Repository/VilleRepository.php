@@ -26,6 +26,46 @@ class VilleRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * Construit le QueryBuilder commun avec les filtres appliqués.
+     */
+    private function createFilteredQueryBuilder(string $nom): \Doctrine\ORM\QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('v');
+
+        if ($nom !== '') {
+            $qb->andWhere('v.nom LIKE :nom')
+                ->setParameter('nom', '%' . $nom . '%');
+        }
+
+        $qb->orderBy('v.nom', 'ASC');
+
+        return $qb;
+    }
+
+    /**
+     * Récupère le nombre total de villes correspondant aux filtres.
+     */
+    public function countFiltered(string $nom): int
+    {
+        $qb = $this->createFilteredQueryBuilder($nom)
+            ->select('COUNT(v.id)');
+
+        return (int)$qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @return Ville[]
+     */
+    public function findFiltered(string $nom, int $limit = 10, int $offset = 0): array
+    {
+        $qb = $this->createFilteredQueryBuilder($nom)
+            ->setMaxResults($limit)
+            ->setFirstResult($offset);
+
+        return $qb->getQuery()->getResult();
+    }
+
     public function hasLieuUsedInSortie(int $villeId): bool
     {
         $count = $this->createQueryBuilder('v')
