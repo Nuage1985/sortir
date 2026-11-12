@@ -101,7 +101,7 @@ class SortieRepository extends ServiceEntityRepository
      * États interdits : En cours, Terminée
      */
 
-    public function findFilteredSorties(Campus $campus, ?EtatSortie $etat = null, ?\DateTimeImmutable $date = null): array
+    public function findFilteredSorties(Campus $campus, ?EtatSortie $etat = null, ?\DateTimeInterface $date = null): array
     {
         $qb = $this->createQueryBuilder('s')
             ->andWhere('s.campus = :campus')
@@ -133,7 +133,7 @@ class SortieRepository extends ServiceEntityRepository
         }
     }
 
-    private function filterByPeriod(QueryBuilder $qb, ?\DateTime $debut, ?\DateTime $fin): void
+    private function filterByPeriod(QueryBuilder $qb, ?\DateTimeInterface $debut, ?\DateTimeInterface $fin): void
     {
         if ($debut) {
             $qb->andWhere('s.dateHeureDebut >= :debut')

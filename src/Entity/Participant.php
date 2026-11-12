@@ -10,6 +10,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[UniqueEntity(fields: ['mail'], message: 'Ce compte mail existe déjà !')]
@@ -20,22 +21,26 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface, 
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['sortie:read'])]
     private ?int $id = null;
 
     #[Assert\NotBlank(message: 'Merci de saisir un pseudonyme')]
     #[Assert\Length(min: 5, max: 180)]
     #[ORM\Column(length: 180)]
+    #[Groups(['sortie:read'])]
     private ?string $pseudo = null;
 
     #[Assert\NotBlank(message: 'Merci de saisir un nom')]
     #[Assert\Length(min: 2, max: 50)]
     #[ORM\Column(length: 50)]
+    #[Groups(['sortie:read'])]
     private ?string $nom = null;
 
 
     #[Assert\NotBlank(message: 'Merci de saisir un prénom')]
     #[Assert\Length(min: 2, max: 50)]
     #[ORM\Column(length: 50)]
+    #[Groups(['sortie:read'])]
     private ?string $prenom = null;
 
     #[Assert\Length(max: 20)]

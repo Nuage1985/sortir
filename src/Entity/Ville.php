@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[UniqueEntity(fields: 'nom', message: 'Cette ville existe déjà !')]
@@ -21,11 +22,13 @@ class Ville
     #[Assert\NotBlank(message: 'Le nom de la ville est obligatoire.')]
     #[Assert\Length(min: 2, max: 180, minMessage: '2 caractères minimum (ex : Ur)', maxMessage: '180 caractères maximum')]
     #[ORM\Column(length: 180)]
+    #[Groups(['sortie:read'])]
     private ?string $nom = null;
 
     #[Assert\NotBlank(message: 'Le code postal est obligatoire.')]
     #[Assert\Regex(pattern: '/^[0-9]{5}$/', message: 'Le code postal doit contenir 5 chiffres (ex : 75001).')]
     #[ORM\Column(length: 5)]
+    #[Groups(['sortie:read'])]
     private ?string $codePostal = null;
 
     /**
