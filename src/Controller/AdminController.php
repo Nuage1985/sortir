@@ -101,7 +101,9 @@ final class AdminController extends AbstractController
             throw $this->createNotFoundException('Ville introuvable.');
         }
 
-        $form = $this->createForm(AdminVillesType::class, $ville);
+        $form = $this->createForm(AdminVillesType::class, $ville, [
+            'include_submit' => false,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
