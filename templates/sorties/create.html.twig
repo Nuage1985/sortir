@@ -62,6 +62,17 @@
         {# Sélection du lieu + détails affichés dynamiquement #}
         <div data-controller="lieu-details"
              data-lieu-details-lieux-value='{{ lieuxData|json_encode|e('html_attr') }}'>
+            <div class="mb-3">
+                <label class="block mb-2 text-sm font-medium text-heading">Filtrer par ville</label>
+                <label>
+                    <input
+                        type="text"
+                        data-lieu-details-target="villeFilter"
+                        placeholder="Ex: Rennes"
+                        class="bg-gray-800 border border-gray-600 text-heading text-sm rounded-lg w-full px-3 py-2.5"
+                    >
+                </label>
+            </div>
             <div class="md:col-span-2">
                 <span class="text-red-500 text-xs mb-0.5">*</span>
                 {{ form_label(sortieForm.lieu) }}
