@@ -10,7 +10,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[UniqueEntity(fields: 'nom', message: 'Cette ville existe déjà !')]
+#[UniqueEntity(fields: 'codePostal', message: 'Cette ville existe déjà !')]
 #[ORM\Entity(repositoryClass: VilleRepository::class)]
 class Ville
 {
