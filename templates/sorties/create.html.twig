@@ -62,7 +62,8 @@
         {# Sélection du lieu + détails affichés dynamiquement #}
         <div data-controller="lieu-details"
              data-lieu-details-lieux-value='{{ lieuxData|json_encode|e('html_attr') }}'>
-            <div class="mb-3">
+
+            <div class="mt-4">
                 <label class="block mb-2 text-sm font-medium text-heading">Filtrer par ville</label>
                 <label>
                     <input
@@ -110,7 +111,8 @@
             {{ form_label(sortieForm.infosSortie) }}
             {{ form_widget(sortieForm.infosSortie) }}
             {{ form_errors(sortieForm.infosSortie) }}
-            <p class="text-s text-gray-400 mt-1"><span class="text-red-500 text-xs mb-0.5">(*)</span> Les champs marqués d'un astérisque sont obligatoires.</p>
+            <p class="text-s text-gray-400 mt-1"><span class="text-red-500 text-xs mb-0.5">(*)</span> Les champs marqués
+                d'un astérisque sont obligatoires.</p>
             <p class="mt-4 text-s text-center text-orange-400 mt-1">Une sortie publiée ne peut plus être modifiée</p>
         </div>
 
