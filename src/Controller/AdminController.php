@@ -18,6 +18,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -103,7 +104,9 @@ final class AdminController extends AbstractController
             throw $this->createNotFoundException('Ville introuvable.');
         }
 
-        $form = $this->createForm(AdminVillesType::class, $ville);
+        $form = $this->createForm(AdminVillesType::class, $ville, [
+            'include_submit' => false,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -286,7 +289,8 @@ final class AdminController extends AbstractController
     }
 
     #[Route('/profile-create', name: 'admin_profile_create', methods: ['GET', 'POST'])]
-    public function createUser(Request $request, EntityManagerInterface $entityManager): Response
+    public function createUser(Request $request, EntityManagerInterface $entityManager,
+                               UserPasswordHasherInterface $passwordHasher): Response
     {
         // Créer un nouvel utilisateur (Participant)
         $participant = new Participant();
@@ -301,6 +305,13 @@ final class AdminController extends AbstractController
 
         // Si le formulaire est correctement soumis
         if ($profilCreateForm->isSubmitted() && $profilCreateForm->isValid()) {
+
+            // Hasher le mot de passe (obligatoire à la création !)
+            $plainPassword = $profilCreateForm->get('password')->getData();
+            if (!empty($plainPassword)) {
+                $hashed = $passwordHasher->hashPassword($participant, $plainPassword);
+                $participant->setPassword($hashed);
+            }
 
             $entityManager->persist($participant);
             $entityManager->flush();
@@ -318,7 +329,8 @@ final class AdminController extends AbstractController
     }
 
     #[Route('/profile-edit/{id}', name: 'admin_profile_edit', methods: ['GET', 'POST'])]
-    public function editUser(int $id, Request $request, EntityManagerInterface $entityManager): Response
+    public function editUser(int $id, Request $request, EntityManagerInterface $entityManager,
+                             UserPasswordHasherInterface $passwordHasher): Response
     {
         // Récupérer le profil à éditer
         $participant = $this->participantRepository->find($id);
@@ -337,6 +349,14 @@ final class AdminController extends AbstractController
 
         // Si le formulaire est correctement soumis
         if ($profilEditForm->isSubmitted() && $profilEditForm->isValid()) {
+
+            // Hasher le mot de passe, si un nouveau mot de passe a été fourni
+            $plainPassword = $profilEditForm->get('password')->getData();
+            if (!empty($plainPassword)) {
+                $hashed = $passwordHasher->hashPassword($participant, $plainPassword);
+                $participant->setPassword($hashed);
+            }
+
             $entityManager->flush();
 
             // Message flash et redirection
