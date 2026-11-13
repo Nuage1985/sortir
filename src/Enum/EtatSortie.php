@@ -46,4 +46,13 @@ enum EtatSortie: string
             self::Historisee => 'Historisée',
         };
     }
+
+    // Valeurs utilisées pour l'api
+    /** @return string[] */
+    public static function values(): array
+    {
+        return array_column(self::cases(), 'value');
+    }
 }
+
+

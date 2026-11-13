@@ -78,7 +78,7 @@ class Sortie
     private Collection $participants;
 
     #[ORM\ManyToOne(targetEntity: Participant::class)]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     #[Groups(['sortie:read'])]
     private ?Participant $organisateur = null;
 

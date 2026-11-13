@@ -30,12 +30,32 @@ Application web d'organisation de sorties pour les étudiants de l'ENI, réalis�
    composer install
    ```
 
-   Cette commande installe aussi automatiquement le JavaScript de Flowbite (`importmap:install`).
+### Authentification JWT pour l'Api
 
-2. Créer un fichier `.env.local` à la racine (il est ignoré par Git) et y renseigner sa propre connexion à la base de données :
+Prérequis : extensions PHP `sodium` et `openssl` activées
+pour vérifier : `php -m`
+si non présent, aller dans php.ini : `php --ini`
+1) décommenter `extension=sodium` et `extension=openssl` dans le php.ini.
+2) redémarrer les services
+
+Après `composer install` :
+
+```bash
+php bin/console lexik:jwt:generate-keypair
+```
+
+Les clés sont créées dans `config/jwt/` (non versionnées).
+
+Si error:80000003:system et que vous êtes sur Windows
+alors installer https://slproweb.com/products/Win32OpenSSL.html
+
+2. Créer un fichier `.env.local` à la racine (il est ignoré par Git) et y renseigner :
+- sa propre connexion à la base de données et sa phrase identification Jwt
 
    ```dotenv
    DATABASE_URL="..."
+   JWT_PASSPHRASE="..."
+
    ```
 
    Ne jamais committer ce fichier : chaque développeur a le sien.

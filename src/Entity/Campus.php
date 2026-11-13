@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[UniqueEntity(fields: ['nom'], message: 'Ce campus existe déjà !')]
@@ -17,12 +18,14 @@ class Campus
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['sortie:read'])]
     private ?int $id = null;
 
     #[Assert\NotBlank(message: 'Merci de saisir un campus')]
     #[Assert\Length(min: 2, max: 180,
         minMessage: '2 caractères minimum (ex: Ur)', maxMessage: '180 caractères maximum')]
     #[ORM\Column(length: 180)]
+    #[Groups(['sortie:read'])]
     private ?string $nom = null;
 
     /**

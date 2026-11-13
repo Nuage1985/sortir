@@ -14,6 +14,18 @@ security:
             # Ensure dev tools and static assets are always allowed
             pattern: ^/(_profiler(/|$)|(_wdt|assets|build)/)
             security: false
+        login:
+            pattern: ^/api/login_check
+            stateless: true
+            json_login:
+                username_path: email
+                check_path: /api/login_check
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+        api:
+            pattern: ^/api
+            stateless: true
+            jwt: ~
         main:
             user_checker: App\Security\UserChecker
             lazy: true
@@ -40,10 +52,12 @@ security:
 
     # Note: Only the *first* matching rule is applied
     access_control:
-        - { path: ^/admin, roles: ROLE_ADMIN }
-        - { path: ^/profil, roles: ROLE_USER }
-        - { path: ^/sorties, roles: ROLE_USER }
-        - { path: ^/, roles: PUBLIC_ACCESS }
+        - { path: ^/api/login,  roles: PUBLIC_ACCESS }
+        - { path: ^/api,        roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/admin,      roles: ROLE_ADMIN }
+        - { path: ^/profil,     roles: ROLE_USER }
+        - { path: ^/sorties,    roles: ROLE_USER }
+        - { path: ^/,           roles: PUBLIC_ACCESS }
 
 
 when@test:
