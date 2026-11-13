@@ -16,7 +16,7 @@ import { Controller } from '@hotwired/stimulus';
  *   </div>
  */
 export default class extends Controller {
-    static targets = ['select', 'details', 'rue', 'ville', 'codePostal', 'coordonnees'];
+    static targets = ['select','villeFilter', 'details', 'rue', 'ville', 'codePostal', 'coordonnees'];
     static values = { lieux: Object };
 
     connect() {
@@ -25,7 +25,10 @@ export default class extends Controller {
             return;
         }
         // Afficher les détails du lieu déjà sélectionné au chargement (page d'édition)
+        this.populateSelect();
         this.updateDetails();
+
+        this.villeFilterTarget.addEventListener('input', () => this.populateSelect());
         this.selectTarget.addEventListener('change', () => this.updateDetails());
     }
 
@@ -50,4 +53,45 @@ export default class extends Controller {
             this.detailsTarget.classList.add('hidden');
         }
     }
+
+    populateSelect() {
+        const filter = (this.villeFilterTarget?.value || '').trim().toLowerCase();
+        const select = this.selectTarget;
+
+        const currentValue = select.value;
+
+        // on vide les options sauf le placeholder
+        select.innerHTML = '';
+
+        const optionPlaceholder = document.createElement('option');
+        optionPlaceholder.value = '';
+        optionPlaceholder.textContent = '-- Choisir un lieu --';
+        select.appendChild(optionPlaceholder);
+
+        Object.entries(this.lieuxValue).forEach(([id, data]) => {
+            const ville = (data.ville || '').toLowerCase();
+            const nom = (data.nom || '').toLowerCase();
+
+            const matches =
+                !filter ||
+                ville.includes(filter) ||
+                nom.includes(filter);
+
+            if (matches) {
+                const option = document.createElement('option');
+                option.value = id;
+                option.textContent = data.nom || 'Lieu';
+                select.appendChild(option);
+            }
+        });
+
+        if (currentValue && [...select.options].some(option => option.value === currentValue)) {
+            select.value = currentValue;
+        } else {
+            select.value = '';
+        }
+
+        this.updateDetails();
+    }
+
 }

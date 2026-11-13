@@ -73,6 +73,7 @@ readonly class SortieServiceImpl implements SortieService
         $lieuxData = [];
         foreach ($lieux as $lieu) {
             $lieuxData[$lieu->getId()] = [
+                'nom' => $lieu->getNom(),
                 'rue' => $lieu->getRue(),
                 'ville' => $lieu->getVille() ? $lieu->getVille()->getNom() : '',
                 'codePostal' => $lieu->getVille() ? $lieu->getVille()->getCodePostal() : '',
@@ -136,4 +137,5 @@ readonly class SortieServiceImpl implements SortieService
         $this->entityManager->flush();
         return true;
     }
+
 }
