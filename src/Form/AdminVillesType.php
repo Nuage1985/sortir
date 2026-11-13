@@ -26,17 +26,22 @@ class AdminVillesType extends AbstractType
                 'label' => 'Code postal : ',
                 'label_attr' => ['class' => $labelAttr],
                 'attr' => ['class' => $inputAttr],
-            ])
-            ->add('save', SubmitType::class, [
+            ]);
+
+        if ($options['include_submit']) {
+            $builder->add('save', SubmitType::class, [
                 'label' => 'Ajouter',
                 'attr' => ['class' => 'cursor-pointer font-medium text-blue-500 hover:underline bg-transparent border-0 p-0'],
             ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Ville::class,
+            'include_submit' => true,
         ]);
+        $resolver->setAllowedTypes('include_submit', 'bool');
     }
 }
